@@ -1,0 +1,111 @@
+fn main() -> void {
+    let failures: int = 0;
+
+    let arr: int[] = [1, 2, 3];
+    push(arr, 4);
+    if arr[3] == 4 {
+        print("PASS: push modifies in-place");
+    } else {
+        print("FAIL: push does not modify in-place");
+        failures = failures + 1;
+    }
+
+    pop(arr);
+    if len(arr) == 3 {
+        print("PASS: pop modifies in-place");
+    } else {
+        print("FAIL: pop does not modify in-place");
+        failures = failures + 1;
+    }
+
+    arr[0] = 99;
+    if arr[0] == 99 {
+        print("PASS: arr[i]=v modifies in-place");
+    } else {
+        print("FAIL: arr[i]=v does not modify in-place");
+        failures = failures + 1;
+    }
+
+    let arr2: int[] = [3, 1, 2];
+    sort(arr2);
+    if arr2[0] == 1 && arr2[1] == 2 && arr2[2] == 3 {
+        print("PASS: sort modifies in-place");
+    } else {
+        print("FAIL: sort does not modify in-place");
+        failures = failures + 1;
+    }
+
+    let arr3: int[] = [1, 2, 3];
+    reverse_arr(arr3);
+    if arr3[0] == 3 && arr3[1] == 2 && arr3[2] == 1 {
+        print("PASS: reverse_arr modifies in-place");
+    } else {
+        print("FAIL: reverse_arr does not modify in-place");
+        failures = failures + 1;
+    }
+
+    let d1: dict = dict();
+    dict_set(d1, "a", 1);
+    dict_set(d1, "b", 2);
+    let va: int = dict_get(d1, "a");
+    let vb: int = dict_get(d1, "b");
+    if va == 1 && vb == 2 {
+        print("PASS: dict_set modifies in-place");
+    } else {
+        print("FAIL: dict_set does not modify in-place");
+        failures = failures + 1;
+    }
+
+    dict_remove(d1, "a");
+    if dict_contains_key(d1, "a") {
+        print("FAIL: dict_remove does not modify in-place");
+        failures = failures + 1;
+    } else {
+        print("PASS: dict_remove modifies in-place");
+    }
+
+    let s1: set = set([1, 2, 3]);
+    set_add(s1, 4);
+    if set_contains(s1, 4) {
+        print("PASS: set_add modifies in-place");
+    } else {
+        print("FAIL: set_add does not modify in-place");
+        failures = failures + 1;
+    }
+
+    set_remove(s1, 2);
+    if set_contains(s1, 2) {
+        print("FAIL: set_remove does not modify in-place");
+        failures = failures + 1;
+    } else {
+        print("PASS: set_remove modifies in-place");
+    }
+
+    let d2: dict = dict();
+    dict_set(d2, "x", 10);
+    dict_set(d2, "y", 20);
+    let d3: dict = dict();
+    dict_set(d3, "x", 10);
+    dict_set(d3, "y", 20);
+    if d2 == d3 {
+        print("PASS: dict value equality");
+    } else {
+        print("FAIL: dict value equality");
+        failures = failures + 1;
+    }
+
+    let s2: set = set([1, 2, 3]);
+    let s3: set = set([3, 2, 1]);
+    if s2 == s3 {
+        print("PASS: set value equality");
+    } else {
+        print("FAIL: set value equality");
+        failures = failures + 1;
+    }
+
+    if failures == 0 {
+        print("ALL PASS: mutation and equality");
+    } else {
+        print("FAILED: " + str(failures) + " tests");
+    }
+}

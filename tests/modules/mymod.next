@@ -1,0 +1,7 @@
+// next 1.1
+let x: int = 42;
+let y: string = "hello";
+fn add(a: int, b: int) -> int {
+    return a + b;
+}
+
