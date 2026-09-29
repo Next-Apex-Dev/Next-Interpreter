@@ -6,6 +6,7 @@
 #include <cmath>
 #include <algorithm>
 #include <iostream>
+#include <cstdlib>
 #include <sstream>
 #include <random>
 #include <chrono>
@@ -537,7 +538,7 @@ rb(reg, "fill", 2, 3, "array", [](std::vector<Value>& a, std::ostream*, std::ist
     int64_t count = a[0].as_int();
     Value val = a[1];
     std::vector<Value> r;
-    for (int i = 0; i < count; ++i) r.push_back(val);
+    for (int64_t i = 0; i < count; ++i) r.push_back(val);
     return Value::make_array(std::move(r));
 });
 rb(reg, "range", 1, 3, "array", [](std::vector<Value>& a, std::ostream*, std::istream*, const SourceRange&) -> Value {
@@ -698,7 +699,7 @@ rb(reg, "rotate", 2, 2, "array", [](std::vector<Value>& a, std::ostream*, std::i
     int64_t n = static_cast<int64_t>(arr.size());
     k = ((k % n) + n) % n;
     std::vector<Value> r;
-    for (int i = 0; i < n; ++i) r.push_back(arr[(i + k) % n]);
+    for (int64_t i = 0; i < n; ++i) r.push_back(arr[(i + k) % n]);
     return Value::make_array(std::move(r));
 });
 rb(reg, "first", 1, 1, "any", [](std::vector<Value>& a, std::ostream*, std::istream*, const SourceRange&) -> Value {
@@ -1079,7 +1080,12 @@ rb(reg, "setattr", 3, 3, "null", [](std::vector<Value>& a, std::ostream*, std::i
     if (!a[1].is_string()) throw std::runtime_error("RUN261: setattr 属性名期望字符串");
     std::string attr = a[1].as_string();
     if (obj.is_struct()) {
-        obj.as_struct().fields[attr] = a[2];
+        auto& si = obj.as_struct();
+        auto fit = si.field_access.find(attr);
+        if (fit != si.field_access.end() && fit->second > 0) {
+            throw std::runtime_error("RUN262: setattr 无法修改非公开属性: " + attr);
+        }
+        si.fields[attr] = a[2];
     } else {
         throw std::runtime_error("RUN030: setattr 期望结构体参数");
     }
@@ -1311,9 +1317,13 @@ rb(reg, "protocol_check", 2, 2, "bool", [](std::vector<Value>& a, std::ostream*,
 
     // ===== REPL 内建函数（11.4）=====
 
-    // exit() - 退出 REPL
+    // exit() - 退出程序（REPL 与脚本模式语义一致：立即结束进程）
     rb(reg, "exit", 0, 0, "void", [](std::vector<Value>& a, std::ostream* out, std::istream*, const SourceRange&) -> Value {
-        throw std::runtime_error("EXIT");
+        if (out) { out->flush(); }
+        std::cerr.flush();
+        std::cout.flush();
+        std::exit(0);
+        return Value::make_null();
     });
 
     // help() - 显示帮助信息

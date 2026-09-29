@@ -342,15 +342,9 @@ public:
     AwaitExpr() : Expr(NodeKind::AwaitExpr) {}
 };
 
-class AsyncFnDef : public Decl {
+class AsyncFnDef : public FnDef {
 public:
-    std::string name;
-    std::vector<std::string> type_params;
-    std::vector<Param> params;
-    TypeRef return_type;
-    std::unique_ptr<Expr> body;
-    bool is_async = true;
-    AsyncFnDef() : Decl(NodeKind::AsyncFnDef) {}
+    AsyncFnDef() : FnDef() { is_async = true; node_kind = NodeKind::AsyncFnDef; }
 };
 
 class SpreadExpr : public Expr {

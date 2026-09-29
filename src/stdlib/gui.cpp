@@ -726,12 +726,18 @@ void register_all_gui() {
         }
     };
 
+    static auto safe_gui_int = [](double v) -> int {
+        if (v > 2147483647.0) return 2147483647;
+        if (v < -2147483648.0) return -2147483647 - 1;
+        return static_cast<int>(v);
+    };
+
     gui_rb(reg, "gui_window", 2, 3, "int", [&](std::vector<Value>& a, std::ostream*, std::istream*, const SourceRange&) -> Value {
         if (!a[0].is_string()) throw std::runtime_error("RUN152: gui_window 标题参数期望字符串");
         if (!a[1].is_int() && !a[1].is_float()) throw std::runtime_error("RUN152: gui_window 宽度参数期望数值");
         if (a.size() > 2 && !a[2].is_int() && !a[2].is_float()) throw std::runtime_error("RUN332: gui_window 高度参数期望数值");
-        return Value::make_int(gui.create_window(a[0].as_string(), (int)a[1].as_number(),
-            a.size() > 2 ? (int)a[2].as_number() : 400));
+        return Value::make_int(gui.create_window(a[0].as_string(), safe_gui_int(a[1].as_number()),
+            a.size() > 2 ? safe_gui_int(a[2].as_number()) : 400));
     });
 
     gui_rb(reg, "gui_button", 6, 6, "int", [&](std::vector<Value>& a, std::ostream*, std::istream*, const SourceRange&) -> Value {
@@ -739,7 +745,7 @@ void register_all_gui() {
         if (!a[1].is_string()) throw std::runtime_error("RUN153: gui_button 文本参数期望字符串");
         check_num_args(a, "gui_button", 2, 5);
         return Value::make_int(gui.create_button(a[0].as_int(), a[1].as_string(),
-            (int)a[2].as_number(), (int)a[3].as_number(), (int)a[4].as_number(), (int)a[5].as_number()));
+            safe_gui_int(a[2].as_number()), safe_gui_int(a[3].as_number()), safe_gui_int(a[4].as_number()), safe_gui_int(a[5].as_number())));
     });
 
     gui_rb(reg, "gui_label", 6, 6, "int", [&](std::vector<Value>& a, std::ostream*, std::istream*, const SourceRange&) -> Value {
@@ -747,7 +753,7 @@ void register_all_gui() {
         if (!a[1].is_string()) throw std::runtime_error("RUN154: gui_label 文本参数期望字符串");
         check_num_args(a, "gui_label", 2, 5);
         return Value::make_int(gui.create_label(a[0].as_int(), a[1].as_string(),
-            (int)a[2].as_number(), (int)a[3].as_number(), (int)a[4].as_number(), (int)a[5].as_number()));
+            safe_gui_int(a[2].as_number()), safe_gui_int(a[3].as_number()), safe_gui_int(a[4].as_number()), safe_gui_int(a[5].as_number())));
     });
 
     gui_rb(reg, "gui_textbox", 6, 6, "int", [&](std::vector<Value>& a, std::ostream*, std::istream*, const SourceRange&) -> Value {
@@ -755,7 +761,7 @@ void register_all_gui() {
         if (!a[1].is_string()) throw std::runtime_error("RUN155: gui_textbox 文本参数期望字符串");
         check_num_args(a, "gui_textbox", 2, 5);
         return Value::make_int(gui.create_textbox(a[0].as_int(), a[1].as_string(),
-            (int)a[2].as_number(), (int)a[3].as_number(), (int)a[4].as_number(), (int)a[5].as_number()));
+            safe_gui_int(a[2].as_number()), safe_gui_int(a[3].as_number()), safe_gui_int(a[4].as_number()), safe_gui_int(a[5].as_number())));
     });
 
     gui_rb(reg, "gui_checkbox", 6, 6, "int", [&](std::vector<Value>& a, std::ostream*, std::istream*, const SourceRange&) -> Value {
@@ -763,7 +769,7 @@ void register_all_gui() {
         if (!a[1].is_string()) throw std::runtime_error("RUN156: gui_checkbox 文本参数期望字符串");
         check_num_args(a, "gui_checkbox", 2, 5);
         return Value::make_int(gui.create_checkbox(a[0].as_int(), a[1].as_string(),
-            (int)a[2].as_number(), (int)a[3].as_number(), (int)a[4].as_number(), (int)a[5].as_number()));
+            safe_gui_int(a[2].as_number()), safe_gui_int(a[3].as_number()), safe_gui_int(a[4].as_number()), safe_gui_int(a[5].as_number())));
     });
 
     gui_rb(reg, "gui_radio", 6, 6, "int", [&](std::vector<Value>& a, std::ostream*, std::istream*, const SourceRange&) -> Value {
@@ -771,7 +777,7 @@ void register_all_gui() {
         if (!a[1].is_string()) throw std::runtime_error("RUN157: gui_radio 文本参数期望字符串");
         check_num_args(a, "gui_radio", 2, 5);
         return Value::make_int(gui.create_radio(a[0].as_int(), a[1].as_string(),
-            (int)a[2].as_number(), (int)a[3].as_number(), (int)a[4].as_number(), (int)a[5].as_number()));
+            safe_gui_int(a[2].as_number()), safe_gui_int(a[3].as_number()), safe_gui_int(a[4].as_number()), safe_gui_int(a[5].as_number())));
     });
 
     gui_rb(reg, "gui_listbox", 6, 6, "int", [&](std::vector<Value>& a, std::ostream*, std::istream*, const SourceRange&) -> Value {
@@ -780,7 +786,7 @@ void register_all_gui() {
         if (a[1].is_array()) for (auto& v : a[1].as_array()) items.push_back(v.to_display());
         check_num_args(a, "gui_listbox", 2, 5);
         return Value::make_int(gui.create_listbox(a[0].as_int(), items,
-            (int)a[2].as_number(), (int)a[3].as_number(), (int)a[4].as_number(), (int)a[5].as_number()));
+            safe_gui_int(a[2].as_number()), safe_gui_int(a[3].as_number()), safe_gui_int(a[4].as_number()), safe_gui_int(a[5].as_number())));
     });
 
     gui_rb(reg, "gui_combobox", 6, 6, "int", [&](std::vector<Value>& a, std::ostream*, std::istream*, const SourceRange&) -> Value {
@@ -789,21 +795,21 @@ void register_all_gui() {
         if (a[1].is_array()) for (auto& v : a[1].as_array()) items.push_back(v.to_display());
         check_num_args(a, "gui_combobox", 2, 5);
         return Value::make_int(gui.create_combobox(a[0].as_int(), items,
-            (int)a[2].as_number(), (int)a[3].as_number(), (int)a[4].as_number(), (int)a[5].as_number()));
+            safe_gui_int(a[2].as_number()), safe_gui_int(a[3].as_number()), safe_gui_int(a[4].as_number()), safe_gui_int(a[5].as_number())));
     });
 
     gui_rb(reg, "gui_scrollbar", 5, 5, "int", [&](std::vector<Value>& a, std::ostream*, std::istream*, const SourceRange&) -> Value {
         if (!a[0].is_int()) throw std::runtime_error("RUN160: gui_scrollbar 父窗口ID期望整数");
         check_num_args(a, "gui_scrollbar", 1, 4);
         return Value::make_int(gui.create_scrollbar(a[0].as_int(),
-            (int)a[1].as_number(), (int)a[2].as_number(), (int)a[3].as_number(), (int)a[4].as_number()));
+            safe_gui_int(a[1].as_number()), safe_gui_int(a[2].as_number()), safe_gui_int(a[3].as_number()), safe_gui_int(a[4].as_number())));
     });
 
     gui_rb(reg, "gui_canvas", 5, 5, "int", [&](std::vector<Value>& a, std::ostream*, std::istream*, const SourceRange&) -> Value {
         if (!a[0].is_int()) throw std::runtime_error("RUN161: gui_canvas 父窗口ID期望整数");
         check_num_args(a, "gui_canvas", 1, 4);
         return Value::make_int(gui.create_canvas(a[0].as_int(),
-            (int)a[1].as_number(), (int)a[2].as_number(), (int)a[3].as_number(), (int)a[4].as_number()));
+            safe_gui_int(a[1].as_number()), safe_gui_int(a[2].as_number()), safe_gui_int(a[3].as_number()), safe_gui_int(a[4].as_number())));
     });
 
     gui_rb(reg, "gui_image", 7, 7, "int", [&](std::vector<Value>& a, std::ostream*, std::istream*, const SourceRange&) -> Value {
@@ -811,7 +817,7 @@ void register_all_gui() {
         if (!a[1].is_string()) throw std::runtime_error("RUN162: gui_image 路径参数期望字符串");
         check_num_args(a, "gui_image", 2, 5);
         return Value::make_int(gui.create_image(a[0].as_int(), a[1].as_string(),
-            (int)a[2].as_number(), (int)a[3].as_number(), (int)a[4].as_number(), (int)a[5].as_number()));
+            safe_gui_int(a[2].as_number()), safe_gui_int(a[3].as_number()), safe_gui_int(a[4].as_number()), safe_gui_int(a[5].as_number())));
     });
 
     gui_rb(reg, "gui_menu", 2, 2, "void", [&](std::vector<Value>& a, std::ostream*, std::istream*, const SourceRange&) -> Value {
@@ -880,13 +886,13 @@ void register_all_gui() {
     gui_rb(reg, "gui_set_pos", 3, 3, "void", [&](std::vector<Value>& a, std::ostream*, std::istream*, const SourceRange&) -> Value {
         if (!a[0].is_int()) throw std::runtime_error("RUN172: gui_set_pos 控件ID期望整数");
         check_num_args(a, "gui_set_pos", 1, 2);
-        gui.set_pos(a[0].as_int(), (int)a[1].as_number(), (int)a[2].as_number()); return Value::make_null();
+        gui.set_pos(a[0].as_int(), safe_gui_int(a[1].as_number()), safe_gui_int(a[2].as_number())); return Value::make_null();
     });
 
     gui_rb(reg, "gui_set_size", 3, 3, "void", [&](std::vector<Value>& a, std::ostream*, std::istream*, const SourceRange&) -> Value {
         if (!a[0].is_int()) throw std::runtime_error("RUN173: gui_set_size 控件ID期望整数");
         check_num_args(a, "gui_set_size", 1, 2);
-        gui.set_size(a[0].as_int(), (int)a[1].as_number(), (int)a[2].as_number()); return Value::make_null();
+        gui.set_size(a[0].as_int(), safe_gui_int(a[1].as_number()), safe_gui_int(a[2].as_number())); return Value::make_null();
     });
 
     gui_rb(reg, "gui_set_color", 2, 2, "void", [&](std::vector<Value>& a, std::ostream*, std::istream*, const SourceRange&) -> Value {
@@ -911,24 +917,24 @@ void register_all_gui() {
         if (!a[0].is_int()) throw std::runtime_error("RUN177: gui_draw_line 画布ID期望整数");
         check_num_args(a, "gui_draw_line", 1, 4);
         if (!a[5].is_string()) throw std::runtime_error("RUN177: gui_draw_line 颜色参数期望字符串");
-        gui.draw_line(a[0].as_int(), (int)a[1].as_number(), (int)a[2].as_number(),
-            (int)a[3].as_number(), (int)a[4].as_number(), a[5].as_string()); return Value::make_null();
+        gui.draw_line(a[0].as_int(), safe_gui_int(a[1].as_number()), safe_gui_int(a[2].as_number()),
+            safe_gui_int(a[3].as_number()), safe_gui_int(a[4].as_number()), a[5].as_string()); return Value::make_null();
     });
 
     gui_rb(reg, "gui_draw_rect", 6, 6, "void", [&](std::vector<Value>& a, std::ostream*, std::istream*, const SourceRange&) -> Value {
         if (!a[0].is_int()) throw std::runtime_error("RUN178: gui_draw_rect 画布ID期望整数");
         check_num_args(a, "gui_draw_rect", 1, 4);
         if (!a[5].is_string()) throw std::runtime_error("RUN178: gui_draw_rect 颜色参数期望字符串");
-        gui.draw_rect(a[0].as_int(), (int)a[1].as_number(), (int)a[2].as_number(),
-            (int)a[3].as_number(), (int)a[4].as_number(), a[5].as_string()); return Value::make_null();
+        gui.draw_rect(a[0].as_int(), safe_gui_int(a[1].as_number()), safe_gui_int(a[2].as_number()),
+            safe_gui_int(a[3].as_number()), safe_gui_int(a[4].as_number()), a[5].as_string()); return Value::make_null();
     });
 
     gui_rb(reg, "gui_draw_circle", 5, 5, "void", [&](std::vector<Value>& a, std::ostream*, std::istream*, const SourceRange&) -> Value {
         if (!a[0].is_int()) throw std::runtime_error("RUN179: gui_draw_circle 画布ID期望整数");
         check_num_args(a, "gui_draw_circle", 1, 3);
         if (!a[4].is_string()) throw std::runtime_error("RUN179: gui_draw_circle 颜色参数期望字符串");
-        gui.draw_circle(a[0].as_int(), (int)a[1].as_number(), (int)a[2].as_number(),
-            (int)a[3].as_number(), a[4].as_string()); return Value::make_null();
+        gui.draw_circle(a[0].as_int(), safe_gui_int(a[1].as_number()), safe_gui_int(a[2].as_number()),
+            safe_gui_int(a[3].as_number()), a[4].as_string()); return Value::make_null();
     });
 
     gui_rb(reg, "gui_draw_text", 5, 5, "void", [&](std::vector<Value>& a, std::ostream*, std::istream*, const SourceRange&) -> Value {
@@ -936,24 +942,24 @@ void register_all_gui() {
         if (!a[1].is_string()) throw std::runtime_error("RUN180: gui_draw_text 文本参数期望字符串");
         check_num_args(a, "gui_draw_text", 2, 3);
         if (!a[4].is_string()) throw std::runtime_error("RUN180: gui_draw_text 颜色参数期望字符串");
-        gui.draw_text(a[0].as_int(), a[1].as_string(), (int)a[2].as_number(),
-            (int)a[3].as_number(), a[4].as_string()); return Value::make_null();
+        gui.draw_text(a[0].as_int(), a[1].as_string(), safe_gui_int(a[2].as_number()),
+            safe_gui_int(a[3].as_number()), a[4].as_string()); return Value::make_null();
     });
 
     gui_rb(reg, "gui_fill_rect", 6, 6, "void", [&](std::vector<Value>& a, std::ostream*, std::istream*, const SourceRange&) -> Value {
         if (!a[0].is_int()) throw std::runtime_error("RUN181: gui_fill_rect 画布ID期望整数");
         check_num_args(a, "gui_fill_rect", 1, 4);
         if (!a[5].is_string()) throw std::runtime_error("RUN181: gui_fill_rect 颜色参数期望字符串");
-        gui.fill_rect(a[0].as_int(), (int)a[1].as_number(), (int)a[2].as_number(),
-            (int)a[3].as_number(), (int)a[4].as_number(), a[5].as_string()); return Value::make_null();
+        gui.fill_rect(a[0].as_int(), safe_gui_int(a[1].as_number()), safe_gui_int(a[2].as_number()),
+            safe_gui_int(a[3].as_number()), safe_gui_int(a[4].as_number()), a[5].as_string()); return Value::make_null();
     });
 
     gui_rb(reg, "gui_fill_circle", 5, 5, "void", [&](std::vector<Value>& a, std::ostream*, std::istream*, const SourceRange&) -> Value {
         if (!a[0].is_int()) throw std::runtime_error("RUN182: gui_fill_circle 画布ID期望整数");
         check_num_args(a, "gui_fill_circle", 1, 3);
         if (!a[4].is_string()) throw std::runtime_error("RUN182: gui_fill_circle 颜色参数期望字符串");
-        gui.fill_circle(a[0].as_int(), (int)a[1].as_number(), (int)a[2].as_number(),
-            (int)a[3].as_number(), a[4].as_string()); return Value::make_null();
+        gui.fill_circle(a[0].as_int(), safe_gui_int(a[1].as_number()), safe_gui_int(a[2].as_number()),
+            safe_gui_int(a[3].as_number()), a[4].as_string()); return Value::make_null();
     });
 
     gui_rb(reg, "gui_clear_canvas", 1, 1, "void", [&](std::vector<Value>& a, std::ostream*, std::istream*, const SourceRange&) -> Value {

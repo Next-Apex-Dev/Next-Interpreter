@@ -358,8 +358,9 @@ rt(reg, "arr_combinations", 2, 2, "array", [](std::vector<Value>& a, std::ostrea
     if (!a[0].is_array()) throw std::runtime_error("RUN098: arr_combinations 期望数组参数");
     if (!a[1].is_int()) throw std::runtime_error("RUN316: arr_combinations 第二参数期望整数");
     auto& arr = a[0].as_array();
-    int k = static_cast<int>(a[1].as_int());
-    if (k <= 0 || k > static_cast<int>(arr.size())) return Value::make_array({});
+    int64_t k64 = a[1].as_int();
+    if (k64 <= 0 || k64 > static_cast<int64_t>(arr.size())) return Value::make_array({});
+    int k = static_cast<int>(k64);
     std::vector<Value> result;
     std::vector<int> indices(k);
     for (int i = 0; i < k; ++i) indices[i] = i;
@@ -379,8 +380,9 @@ rt(reg, "arr_permutations", 1, 2, "array", [](std::vector<Value>& a, std::ostrea
     if (!a[0].is_array()) throw std::runtime_error("RUN099: arr_permutations 期望数组参数");
     if (a.size() >= 2 && !a[1].is_int()) throw std::runtime_error("RUN317: arr_permutations 第二参数期望整数");
     auto arr = a[0].as_array();
-    int k = a.size() >= 2 ? static_cast<int>(a[1].as_int()) : static_cast<int>(arr.size());
-    if (k <= 0 || k > static_cast<int>(arr.size())) return Value::make_array({});
+    int64_t k64 = a.size() >= 2 ? a[1].as_int() : static_cast<int64_t>(arr.size());
+    if (k64 <= 0 || k64 > static_cast<int64_t>(arr.size())) return Value::make_array({});
+    int k = static_cast<int>(k64);
     std::vector<Value> result;
     std::vector<int> indices(arr.size());
     for (size_t i = 0; i < indices.size(); ++i) indices[i] = static_cast<int>(i);
@@ -451,10 +453,10 @@ rt(reg, "arr_rotate_left", 2, 2, "array", [](std::vector<Value>& a, std::ostream
     if (!a[0].is_array()) throw std::runtime_error("RUN103: arr_rotate_left 期望数组参数");
     if (!a[1].is_int()) throw std::runtime_error("RUN318: arr_rotate_left 第二参数期望整数");
     auto arr = a[0].as_array();
-    int k = static_cast<int>(a[1].as_int());
+    int64_t k64 = a[1].as_int();
     if (arr.empty()) return Value::make_array(std::move(arr));
     int n = static_cast<int>(arr.size());
-    k = ((k % n) + n) % n;
+    int k = static_cast<int>(((k64 % n) + n) % n);
     std::rotate(arr.begin(), arr.begin() + k, arr.end());
     return Value::make_array(std::move(arr));
 });
@@ -462,10 +464,10 @@ rt(reg, "arr_rotate_right", 2, 2, "array", [](std::vector<Value>& a, std::ostrea
     if (!a[0].is_array()) throw std::runtime_error("RUN104: arr_rotate_right 期望数组参数");
     if (!a[1].is_int()) throw std::runtime_error("RUN319: arr_rotate_right 第二参数期望整数");
     auto arr = a[0].as_array();
-    int k = static_cast<int>(a[1].as_int());
+    int64_t k64 = a[1].as_int();
     if (arr.empty()) return Value::make_array(std::move(arr));
     int n = static_cast<int>(arr.size());
-    k = ((k % n) + n) % n;
+    int k = static_cast<int>(((k64 % n) + n) % n);
     std::rotate(arr.begin(), arr.end() - k, arr.end());
     return Value::make_array(std::move(arr));
 });
@@ -473,11 +475,11 @@ rt(reg, "arr_window", 2, 2, "array", [](std::vector<Value>& a, std::ostream*, st
     if (!a[0].is_array()) throw std::runtime_error("RUN105: arr_window 期望数组参数");
     if (!a[1].is_int()) throw std::runtime_error("RUN320: arr_window 第二参数期望整数");
     auto& arr = a[0].as_array();
-    int size = static_cast<int>(a[1].as_int());
+    int64_t size = a[1].as_int();
     if (size <= 0) return Value::make_array({});
     std::vector<Value> windows;
-    for (int i = 0; i + size <= static_cast<int>(arr.size()); ++i) {
-        std::vector<Value> w(arr.begin() + i, arr.begin() + i + size);
+    for (int64_t i = 0; i + size <= static_cast<int64_t>(arr.size()); ++i) {
+        std::vector<Value> w(arr.begin() + static_cast<size_t>(i), arr.begin() + static_cast<size_t>(i + size));
         windows.push_back(Value::make_array(std::move(w)));
     }
     return Value::make_array(std::move(windows));
@@ -486,12 +488,12 @@ rt(reg, "arr_chunks_of", 2, 2, "array", [](std::vector<Value>& a, std::ostream*,
     if (!a[0].is_array()) throw std::runtime_error("RUN106: arr_chunks_of 期望数组参数");
     if (!a[1].is_int()) throw std::runtime_error("RUN321: arr_chunks_of 第二参数期望整数");
     auto& arr = a[0].as_array();
-    int size = static_cast<int>(a[1].as_int());
+    int64_t size = a[1].as_int();
     if (size <= 0) throw std::runtime_error("RUN343: arr_chunks_of 块大小必须为正数");
     std::vector<Value> r;
-    for (int i = 0; i < static_cast<int>(arr.size()); i += size) {
-        int end = std::min(i + size, static_cast<int>(arr.size()));
-        std::vector<Value> chunk(arr.begin() + i, arr.begin() + end);
+    for (int64_t i = 0; i < static_cast<int64_t>(arr.size()); i += size) {
+        int64_t end = std::min(i + size, static_cast<int64_t>(arr.size()));
+        std::vector<Value> chunk(arr.begin() + static_cast<size_t>(i), arr.begin() + static_cast<size_t>(end));
         r.push_back(Value::make_array(std::move(chunk)));
     }
     return Value::make_array(std::move(r));
@@ -500,10 +502,10 @@ rt(reg, "arr_step_by", 2, 2, "array", [](std::vector<Value>& a, std::ostream*, s
     if (!a[0].is_array()) throw std::runtime_error("RUN107: arr_step_by 期望数组参数");
     if (!a[1].is_int()) throw std::runtime_error("RUN322: arr_step_by 第二参数期望整数");
     auto& arr = a[0].as_array();
-    int step = static_cast<int>(a[1].as_int());
+    int64_t step = a[1].as_int();
     if (step <= 0) throw std::runtime_error("RUN344: arr_step_by 步长必须为正数");
     std::vector<Value> r;
-    for (int i = 0; i < static_cast<int>(arr.size()); i += step) r.push_back(arr[i]);
+    for (int64_t i = 0; i < static_cast<int64_t>(arr.size()); i += step) r.push_back(arr[static_cast<size_t>(i)]);
     return Value::make_array(std::move(r));
 });
 rt(reg, "arr_enumerate", 1, 1, "array", [](std::vector<Value>& a, std::ostream*, std::istream*, const SourceRange&) -> Value {
@@ -816,13 +818,17 @@ rt(reg, "time_now_ms", 0, 0, "int", [](std::vector<Value>&, std::ostream*, std::
 rt(reg, "time_format", 1, 1, "string", [](std::vector<Value>& a, std::ostream*, std::istream*, const SourceRange&) -> Value {
     if (!a[0].is_int()) throw std::runtime_error("RUN223: time_format 期望整数参数");
     auto ms = a[0].as_int();
+    if (ms < -62135596800000LL || ms > 253402300799999LL)
+        throw std::runtime_error("RUN366: time_format 时间戳超出可表示范围");
     auto tp = std::chrono::system_clock::time_point(std::chrono::milliseconds(ms));
     auto t = std::chrono::system_clock::to_time_t(tp);
     std::ostringstream oss;
     {
         static std::mutex time_mtx;
         std::lock_guard<std::mutex> lock(time_mtx);
-        oss << std::ctime(&t);
+        const char* ts = std::ctime(&t);
+        if (!ts) throw std::runtime_error("RUN366: time_format 时间戳无效，无法格式化");
+        oss << ts;
     }
     std::string s = oss.str();
     if (!s.empty() && s.back() == '\n') s.pop_back();
@@ -877,7 +883,9 @@ rt(reg, "util_random_int", 2, 2, "int", [](std::vector<Value>& a, std::ostream*,
     uint64_t r;
     {
         std::lock_guard<std::mutex> lk(g_rng_mtx);
-        r = g_shared_rng() % range;
+        uint64_t limit = UINT64_MAX - (UINT64_MAX % range);
+        do { r = g_shared_rng(); } while (r >= limit);
+        r %= range;
     }
     return Value::make_int(static_cast<int64_t>(static_cast<uint64_t>(lo) + r));
 });

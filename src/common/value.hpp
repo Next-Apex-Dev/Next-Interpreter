@@ -46,6 +46,7 @@ struct StructInstance {
     std::string struct_name;
     std::map<std::string, Value> fields;
     std::vector<std::string> class_attr_names; // 类属性名列表（用于 hasattr 检查）
+    std::map<std::string, int> field_access;   // 字段访问级别 0=public/1=protected/2=private
     StructInstance() = default;
 };
 
@@ -75,6 +76,12 @@ struct StackFrame {
     StackFrame() = default;
 };
 
+struct FileHandleState {
+    void* fp = nullptr;
+    bool is_open = false;
+    FileHandleState() = default;
+};
+
 struct FileHandleData {
     std::string path;
     std::string mode;
@@ -82,15 +89,41 @@ struct FileHandleData {
     int buffer_size = 8192;
     int lock_kind = 0;          // 0=none/1=shared/2=exclusive
     bool is_binary = false;
-    void* native_handle = nullptr;  // FILE* 或 fd
-    bool is_open = false;
-    std::shared_ptr<FILE> _handle_owner;  // manages FILE* lifetime via shared_ptr
-    FileHandleData() = default;
+    std::shared_ptr<FileHandleState> _state;  // shared state: all copies see same is_open/fp
+    FileHandleData() : _state(std::make_shared<FileHandleState>()) {}
     ~FileHandleData() = default;
-    FileHandleData(const FileHandleData& o) = default;
-    FileHandleData(FileHandleData&& o) noexcept = default;
-    FileHandleData& operator=(const FileHandleData& o) = default;
-    FileHandleData& operator=(FileHandleData&& o) noexcept = default;
+    FileHandleData(const FileHandleData& o)
+        : path(o.path), mode(o.mode), encoding(o.encoding),
+          buffer_size(o.buffer_size), lock_kind(o.lock_kind),
+          is_binary(o.is_binary), _state(o._state) {
+    }
+    FileHandleData(FileHandleData&& o) noexcept
+        : path(std::move(o.path)), mode(std::move(o.mode)), encoding(std::move(o.encoding)),
+          buffer_size(o.buffer_size), lock_kind(o.lock_kind),
+          is_binary(o.is_binary), _state(std::move(o._state)) {
+        o._state = std::make_shared<FileHandleState>();
+    }
+    FileHandleData& operator=(const FileHandleData& o) {
+        if (this != &o) {
+            path = o.path; mode = o.mode; encoding = o.encoding;
+            buffer_size = o.buffer_size; lock_kind = o.lock_kind;
+            is_binary = o.is_binary; _state = o._state;
+        }
+        return *this;
+    }
+    FileHandleData& operator=(FileHandleData&& o) noexcept {
+        if (this != &o) {
+            path = std::move(o.path); mode = std::move(o.mode); encoding = std::move(o.encoding);
+            buffer_size = o.buffer_size; lock_kind = o.lock_kind;
+            is_binary = o.is_binary; _state = std::move(o._state);
+            o._state = std::make_shared<FileHandleState>();
+        }
+        return *this;
+    }
+    void* native_handle() const { return _state ? _state->fp : nullptr; }
+    void set_native_handle(void* p) { if (_state) _state->fp = p; }
+    bool is_open() const { return _state && _state->is_open; }
+    void set_open(bool v) { if (_state) _state->is_open = v; }
 };
 
 struct BytesData {
@@ -464,6 +497,8 @@ struct GeneratorData {
             sent_value = o.sent_value; state = o.state; name = o.name; frame = o.frame;
             pc = o.pc; yield_count = o.yield_count; completed = o.completed;
             return_value = o.return_value; cleanup = o.cleanup;
+            const_cast<GeneratorData&>(o).saved_env = nullptr;
+            const_cast<GeneratorData&>(o).cleanup = nullptr;
         }
         return *this;
     }
@@ -524,6 +559,8 @@ struct AsyncGeneratorData {
             if (cleanup) cleanup();
             fn_def = o.fn_def; saved_env = o.saved_env; current_value = o.current_value;
             state = o.state; name = o.name; completed = o.completed; cleanup = o.cleanup;
+            const_cast<AsyncGeneratorData&>(o).saved_env = nullptr;
+            const_cast<AsyncGeneratorData&>(o).cleanup = nullptr;
         }
         return *this;
     }
@@ -966,7 +1003,7 @@ inline bool Value::equals(const Value& other) const {
         case ValueType::FileHandle: {
             const auto& a = as_file_handle();
             const auto& b = other.as_file_handle();
-            return a.path == b.path && a.native_handle == b.native_handle;
+            return a.path == b.path && a.native_handle() == b.native_handle();
         }
         default: return false;
     }

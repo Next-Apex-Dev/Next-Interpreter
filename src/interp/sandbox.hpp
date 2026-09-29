@@ -6,6 +6,7 @@
 #include <vector>
 #include <filesystem>
 #include <mutex>
+#include <algorithm>
 
 namespace next11 {
 
@@ -33,22 +34,36 @@ public:
         }
     }
 
+    // 路径前缀匹配（Windows 不区分大小写）
+    static bool path_starts_with(const std::string& ps, const std::string& rs) {
+#ifdef _WIN32
+        auto to_lower = [](std::string s) { std::transform(s.begin(), s.end(), s.begin(), ::tolower); return s; };
+        std::string pl = to_lower(ps), rl = to_lower(rs);
+#else
+        const std::string& pl = ps; const std::string& rl = rs;
+#endif
+        if (pl == rl) return true;
+        if (pl.size() > rl.size() && pl.compare(0, rl.size(), rl) == 0 &&
+            (pl[rl.size()] == '/' || pl[rl.size()] == '\\')) return true;
+        return false;
+    }
+
     // 校验路径是否在任一允许的根目录内
-    // 返回 true 表示允许，false 表示越界
     bool validate(const std::string& path) const {
         std::lock_guard<std::mutex> lk(_mtx);
         try {
             fs::path p = fs::absolute(fs::path(path)).lexically_normal();
-            // 规范化路径（不要求存在）
             std::string ps = p.string();
             for (const auto& root : _roots) {
                 std::string rs = root.string();
-                // 路径以根目录为前缀则允许
-                if (ps == rs || (ps.size() > rs.size() &&
-                    ps.compare(0, rs.size(), rs) == 0 &&
-                    (ps[rs.size()] == '/' || ps[rs.size()] == '\\'))) {
-                    return true;
+                if (!path_starts_with(ps, rs)) continue;
+                // 防符号链接逃逸：路径存在时 canonical 也必须在 root 内
+                if (fs::exists(p)) {
+                    std::error_code ec;
+                    fs::path canon = fs::canonical(p, ec);
+                    if (!ec && !path_starts_with(canon.string(), rs)) return false;
                 }
+                return true;
             }
             return false;
         } catch (...) {

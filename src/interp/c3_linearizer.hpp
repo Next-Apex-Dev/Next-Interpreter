@@ -126,7 +126,7 @@ public:
         in_stack.insert(cls);
 
         while (!stack.empty()) {
-            const std::string& cur = stack.back();
+            const std::string cur = stack.back();
 
             if (cache.count(cur) > 0) {
                 stack.pop_back();

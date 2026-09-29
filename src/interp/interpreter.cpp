@@ -85,25 +85,25 @@ ExecResult Interpreter::execute(Program& ast, SymbolTable& symbols,
         }
     }
 
-    // 建立类定义表（OOP 4.2）
-    _class_objects.clear();
-    for (auto& d : ast.decls) {
-        if (auto* cd = dynamic_cast<ClassDef*>(d.get())) {
-            create_class(*cd);
-        }
-    }
-
-    // 建立枚举变体到枚举名的映射
-    for (auto& d : ast.decls) {
-        if (auto* ed = dynamic_cast<EnumDef*>(d.get())) {
-            for (auto& v : ed->variants) {
-                _enum_variants[v] = ed->name;
-            }
-        }
-    }
-
     // 执行顶层声明
     try {
+        // 建立类定义表（OOP 4.2）——类属性初始化表达式求值可能抛 Next11Exception，必须在 try 块内
+        _class_objects.clear();
+        for (auto& d : ast.decls) {
+            if (auto* cd = dynamic_cast<ClassDef*>(d.get())) {
+                create_class(*cd);
+            }
+        }
+
+        // 建立枚举变体到枚举名的映射
+        for (auto& d : ast.decls) {
+            if (auto* ed = dynamic_cast<EnumDef*>(d.get())) {
+                for (auto& v : ed->variants) {
+                    _enum_variants[v] = ed->name;
+                }
+            }
+        }
+
         for (auto& d : ast.decls) {
             if (!d) continue;
             if (auto* let = dynamic_cast<LetDecl*>(d.get())) {
@@ -551,19 +551,27 @@ Value Interpreter::eval_tuple(TupleExpr& e) {
 int64_t Interpreter::value_memory(const Value& v) const {
     int64_t sz = 0;
     std::vector<const Value*> stack;
+    std::unordered_set<const void*> visited;
     stack.push_back(&v);
+    visited.insert(&v);
     while (!stack.empty()) {
         const Value* cur = stack.back();
         stack.pop_back();
         if (cur->is_string()) sz += static_cast<int64_t>(cur->as_string().capacity());
         if (cur->is_array()) {
-            for (auto& e : cur->as_array()) { stack.push_back(&e); sz += 48; }
+            for (auto& e : cur->as_array()) {
+                if (visited.insert(&e).second) { stack.push_back(&e); sz += 48; }
+            }
         }
         if (cur->is_tuple()) {
-            for (auto& e : cur->as_tuple()) { stack.push_back(&e); sz += 48; }
+            for (auto& e : cur->as_tuple()) {
+                if (visited.insert(&e).second) { stack.push_back(&e); sz += 48; }
+            }
         }
         if (cur->is_struct()) {
-            for (auto& f : cur->as_struct().fields) { stack.push_back(&f.second); sz += 48; }
+            for (auto& f : cur->as_struct().fields) {
+                if (visited.insert(&f.second).second) { stack.push_back(&f.second); sz += 48; }
+            }
         }
         if (stack.size() > 1000000) return sz;
     }
@@ -918,6 +926,14 @@ Value Interpreter::call_function(const std::string& name, std::vector<Value> arg
                 ret = eval(body);
             }
         } catch (const Next11Exception&) {
+            if (!_call_stack.empty()) {
+                _call_stack.back().set_return(Value::make_null());
+                _call_stack.pop_back();
+            }
+            _env = std::move(saved_env);
+            --_recursion_depth;
+            throw;
+        } catch (const YieldSignal&) {
             if (!_call_stack.empty()) {
                 _call_stack.back().set_return(Value::make_null());
                 _call_stack.pop_back();
@@ -1324,7 +1340,8 @@ ExecSignal Interpreter::exec_stmt(Stmt& s) {
             _env.push_scope();
             try {
                 if (iter.is_array()) {
-                    for (auto& v : iter.as_array()) {
+                    auto snapshot = iter.as_array();
+                    for (auto& v : snapshot) {
                         if (++_loop_count > MAX_LOOP) {
                             _env.pop_scope();
                             runtime_error("RUN004", fs.loc, "循环次数超限（>10亿）");
@@ -1367,7 +1384,8 @@ ExecSignal Interpreter::exec_stmt(Stmt& s) {
                         }
                     }
                 } else if (iter.is_set()) {
-                    for (auto& v : iter.as_set().elements) {
+                    auto snapshot = iter.as_set().elements;
+                    for (auto& v : snapshot) {
                         if (++_loop_count > MAX_LOOP) {
                             _env.pop_scope();
                             runtime_error("RUN004", fs.loc, "循环次数超限（>10亿）");
@@ -1382,7 +1400,8 @@ ExecSignal Interpreter::exec_stmt(Stmt& s) {
                         }
                     }
                 } else if (iter.is_dict()) {
-                    for (auto& kv : iter.as_dict().entries) {
+                    auto snapshot = iter.as_dict().entries;
+                    for (auto& kv : snapshot) {
                         if (++_loop_count > MAX_LOOP) {
                             _env.pop_scope();
                             runtime_error("RUN004", fs.loc, "循环次数超限（>10亿）");
@@ -1444,7 +1463,8 @@ ExecSignal Interpreter::exec_stmt(Stmt& s) {
         }
         case NodeKind::BreakStmt: return ExecSignal::Break;
         case NodeKind::ContinueStmt: return ExecSignal::Continue;
-        case NodeKind::FnDef: {
+        case NodeKind::FnDef:
+        case NodeKind::AsyncFnDef: {
             auto& fn = static_cast<FnDef&>(s);
             // 注册函数到函数映射表
             _fn_map[fn.name] = &fn;
@@ -1678,6 +1698,14 @@ ExecSignal Interpreter::exec_try(TryStmt& s) {
                             result = ExecSignal::Return;
                             break;
                         }
+                        if (sig == ExecSignal::Break) {
+                            result = ExecSignal::Break;
+                            break;
+                        }
+                        if (sig == ExecSignal::Continue) {
+                            result = ExecSignal::Continue;
+                            break;
+                        }
                     }
                 } else {
                     eval(cb);
@@ -1748,6 +1776,14 @@ ExecSignal Interpreter::exec_try(TryStmt& s) {
                             result = ExecSignal::Return;
                             break;
                         }
+                        if (sig == ExecSignal::Break) {
+                            result = ExecSignal::Break;
+                            break;
+                        }
+                        if (sig == ExecSignal::Continue) {
+                            result = ExecSignal::Continue;
+                            break;
+                        }
                     }
                 } else {
                     eval(cb);
@@ -1816,6 +1852,14 @@ ExecSignal Interpreter::exec_try(TryStmt& s) {
                             result = ExecSignal::Return;
                             break;
                         }
+                        if (sig == ExecSignal::Break) {
+                            result = ExecSignal::Break;
+                            break;
+                        }
+                        if (sig == ExecSignal::Continue) {
+                            result = ExecSignal::Continue;
+                            break;
+                        }
                     }
                 } else {
                     eval(cb);
@@ -1859,6 +1903,14 @@ ExecSignal Interpreter::exec_try(TryStmt& s) {
                     auto sig = exec_stmt(*stmt);
                     if (sig == ExecSignal::Return) {
                         result = ExecSignal::Return;
+                        break;
+                    }
+                    if (sig == ExecSignal::Break) {
+                        result = ExecSignal::Break;
+                        break;
+                    }
+                    if (sig == ExecSignal::Continue) {
+                        result = ExecSignal::Continue;
                         break;
                     }
                 }
@@ -1920,6 +1972,14 @@ ExecSignal Interpreter::exec_with(WithStmt& s) {
                         auto sig = exec_stmt(*stmt);
                         if (sig == ExecSignal::Return) {
                             result = ExecSignal::Return;
+                            break;
+                        }
+                        if (sig == ExecSignal::Break) {
+                            result = ExecSignal::Break;
+                            break;
+                        }
+                        if (sig == ExecSignal::Continue) {
+                            result = ExecSignal::Continue;
                             break;
                         }
                     }
@@ -2110,6 +2170,11 @@ Value Interpreter::instantiate_class(const std::string& cls_name,
         if (mit == _class_objects.end()) continue;
         for (const auto& kv : mit->second.dict) {
             si.class_attr_names.push_back(kv.first);
+        }
+        for (const auto& fa : mit->second.field_access) {
+            if (si.field_access.find(fa.first) == si.field_access.end()) {
+                si.field_access[fa.first] = fa.second;
+            }
         }
     }
 

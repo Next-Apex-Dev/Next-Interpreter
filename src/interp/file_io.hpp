@@ -70,9 +70,8 @@ public:
         h.encoding = encoding.empty() ? "utf-8" : encoding;
         h.buffer_size = buffer_size;
         h.is_binary = (mode.find('b') != std::string::npos);
-        h.native_handle = fp;
-        h.is_open = true;
-        h._handle_owner = std::shared_ptr<FILE>(fp, [](FILE* f) { if (f) std::fclose(f); });
+        h.set_native_handle(fp);
+        h.set_open(true);
         h.lock_kind = 0;
         return Value::make_file_handle(std::move(h));
     }
@@ -84,10 +83,10 @@ public:
             throw std::runtime_error("RUN011: read 参数不是文件句柄");
         }
         auto& h = handle.as_file_handle();
-        if (!h.is_open || !h.native_handle) {
+        if (!h.is_open() || !h.native_handle()) {
             throw std::runtime_error("RUN011: 文件句柄已关闭");
         }
-        FILE* fp = static_cast<FILE*>(h.native_handle);
+        FILE* fp = static_cast<FILE*>(h.native_handle());
 
         if (h.is_binary) {
             // 二进制读取
@@ -141,10 +140,10 @@ public:
             throw std::runtime_error("RUN011: write 参数不是文件句柄");
         }
         auto& h = handle.as_file_handle();
-        if (!h.is_open || !h.native_handle) {
+        if (!h.is_open() || !h.native_handle()) {
             throw std::runtime_error("RUN011: 文件句柄已关闭");
         }
-        FILE* fp = static_cast<FILE*>(h.native_handle);
+        FILE* fp = static_cast<FILE*>(h.native_handle());
 
         size_t written = 0;
         if (data.is_bytes()) {
@@ -175,19 +174,16 @@ public:
             throw std::runtime_error("RUN330: close 参数不是文件句柄");
         }
         auto& h = handle.as_file_handle();
-        if (h.is_open && h.native_handle) {
-            // 释放锁（如有）
+        if (h.is_open() && h.native_handle()) {
             if (h.lock_kind != 0) {
                 try { unlock(handle); }
                 catch (const std::exception& e) {
                     std::fprintf(stderr, "警告: close 时释放锁失败: %s\n", e.what());
                 }
             }
-            FILE* fp = static_cast<FILE*>(h.native_handle);
-            std::fclose(fp);
-            h.native_handle = nullptr;
-            h.is_open = false;
-            h._handle_owner.reset();
+            std::fclose(static_cast<FILE*>(h.native_handle()));
+            h.set_native_handle(nullptr);
+            h.set_open(false);
             h.lock_kind = 0;
         }
         return Value::make_bool(true);
@@ -249,7 +245,7 @@ public:
             throw std::runtime_error("RUN011: lock 参数不是文件句柄");
         }
         auto& h = handle.as_file_handle();
-        if (!h.is_open || !h.native_handle) {
+        if (!h.is_open() || !h.native_handle()) {
             throw std::runtime_error("RUN011: 文件句柄已关闭");
         }
         if (h.lock_kind != 0) {
@@ -258,7 +254,7 @@ public:
 
 #ifdef _WIN32
         // Windows: LockFileEx
-        HANDLE hFile = reinterpret_cast<HANDLE>(_get_osfhandle(_fileno(static_cast<FILE*>(h.native_handle))));
+        HANDLE hFile = reinterpret_cast<HANDLE>(_get_osfhandle(_fileno(static_cast<FILE*>(h.native_handle()))));
         if (hFile == INVALID_HANDLE_VALUE) {
             throw std::runtime_error("RUN011: 获取 Windows 文件句柄失败");
         }
@@ -281,7 +277,7 @@ public:
         }
 #else
         // POSIX: flock
-        int fd = fileno(static_cast<FILE*>(h.native_handle));
+        int fd = fileno(static_cast<FILE*>(h.native_handle()));
         int op = (kind == 2) ? (LOCK_EX | LOCK_NB) : (LOCK_SH | LOCK_NB);
         if (flock(fd, op) != 0) {
             throw std::runtime_error("RUN010: 文件锁冲突");
@@ -297,19 +293,19 @@ public:
         }
         auto& h = handle.as_file_handle();
         if (h.lock_kind == 0) return Value::make_bool(true);
-        if (!h.is_open || !h.native_handle) {
+        if (!h.is_open() || !h.native_handle()) {
             h.lock_kind = 0;
             return Value::make_bool(true);
         }
 
 #ifdef _WIN32
-        HANDLE hFile = reinterpret_cast<HANDLE>(_get_osfhandle(_fileno(static_cast<FILE*>(h.native_handle))));
+        HANDLE hFile = reinterpret_cast<HANDLE>(_get_osfhandle(_fileno(static_cast<FILE*>(h.native_handle()))));
         if (hFile != INVALID_HANDLE_VALUE) {
             OVERLAPPED ov = {};
             UnlockFileEx(hFile, 0, 0x7FFFFFFF, 0, &ov);
         }
 #else
-        int fd = fileno(static_cast<FILE*>(h.native_handle));
+        int fd = fileno(static_cast<FILE*>(h.native_handle()));
         flock(fd, LOCK_UN);
 #endif
         h.lock_kind = 0;
