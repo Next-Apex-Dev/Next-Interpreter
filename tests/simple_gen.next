@@ -1,0 +1,10 @@
+// 简单的生成器测试
+fn simple_gen() -> int {
+    yield 1;
+    yield 2;
+    return 3;
+}
+
+fn main() -> void {
+    print("Generator test");
+}

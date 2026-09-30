@@ -1,0 +1,4 @@
+// next 1.1 - 词法错误（非法字符 #）
+fn main() -> void {
+    let x: int = 1 # 2;
+}

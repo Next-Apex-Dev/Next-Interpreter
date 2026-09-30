@@ -1,0 +1,30 @@
+// next 1.1 - 结构体与枚举
+struct Point {
+    x: int;
+    y: int;
+}
+
+enum Color {
+    Red,
+    Green,
+    Blue,
+}
+
+fn color_name(c: string) -> string {
+    return match c {
+        "Red" => "红色",
+        "Green" => "绿色",
+        "Blue" => "蓝色",
+        _ => "未知",
+    };
+}
+
+fn main() -> void {
+    let p: Point = Point { x: 3, y: 4 };
+    print(p.x);
+    print(p.y);
+    print(p.x + p.y);
+    print(color_name("Red"));
+    print(color_name("Green"));
+    print(color_name("Blue"));
+}

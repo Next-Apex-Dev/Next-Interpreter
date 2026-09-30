@@ -1,0 +1,27 @@
+// 测试数组拼接和空数组
+fn main() -> void {
+  let arr: int[] = [];
+  print(len(arr));
+  
+  let arr2: int[] = arr + [1];
+  print(len(arr2));
+  print(arr2[0]);
+  
+  let arr3: int[] = [1, 2, 3];
+  let arr4: int[] = arr3 + [4, 5];
+  print(len(arr4));
+  for v in arr4 {
+    print(v);
+  }
+  
+  // 数组拼接累加
+  let result: int[] = [];
+  let source: int[] = [10, 20, 30];
+  for v in source {
+    result = result + [v];
+  }
+  print(len(result));
+  for v in result {
+    print(v);
+  }
+}
