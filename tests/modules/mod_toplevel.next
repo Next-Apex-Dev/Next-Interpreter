@@ -1,0 +1,10 @@
+// tests/modules/mod_toplevel.next - 用于测试顶层声明执行
+fn compute_init() -> int {
+    return 42;
+}
+
+let toplevel_val: int = compute_init();
+
+fn get_toplevel() -> int {
+    return toplevel_val;
+}

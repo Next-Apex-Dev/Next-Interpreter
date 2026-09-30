@@ -1,0 +1,42 @@
+// 复数功能测试
+fn main() -> void {
+let z1: complex = 3+4i;
+let z2: complex = 2-1i;
+let z3: complex = 5i;
+
+// 复数运算
+let z_add: complex = z1 + z2;
+let z_sub: complex = z1 - z2;
+let z_mul: complex = z1 * z2;
+let z_div: complex = z1 / z2;
+
+// 复数属性
+let r1: float = real(z1);
+let i1: float = imag(z1);
+let a1: float = abs(z1);
+let c1: complex = conj(z1);
+
+// 复数内建函数
+let z4: complex = complex(1.0, 2.0);
+let z5: complex = polar(1.0, 3.14159 / 4.0);
+
+// 复数比较
+let eq: bool = z1 == z2;
+let ne: bool = z1 != z2;
+
+print("z1 = "); print(z1);
+print("z2 = "); print(z2);
+print("z3 = "); print(z3);
+print("z1 + z2 = "); print(z_add);
+print("z1 - z2 = "); print(z_sub);
+print("z1 * z2 = "); print(z_mul);
+print("z1 / z2 = "); print(z_div);
+print("real(z1) = "); print(r1);
+print("imag(z1) = "); print(i1);
+print("abs(z1) = "); print(a1);
+print("conj(z1) = "); print(c1);
+print("complex(1,2) = "); print(z4);
+print("polar(1,pi/4) = "); print(z5);
+print("z1 == z2 = "); print(eq);
+print("z1 != z2 = "); print(ne);
+}

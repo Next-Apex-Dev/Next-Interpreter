@@ -1,0 +1,50 @@
+// next 1.1
+// 访问控制全面测试：private/protected/public 读写方法继承
+class Bank {
+    private let secret: string;
+    protected let level: int;
+    public let name: string;
+    fn __init__(self: Bank, s: string, l: int, n: string) -> void {
+        self.secret = s;
+        self.level = l;
+        self.name = n;
+    }
+    fn get_secret(self: Bank) -> string { return self.secret; }
+    fn set_secret(self: Bank, s: string) -> void { self.secret = s; }
+    fn get_level(self: Bank) -> int { return self.level; }
+}
+
+class SubBank extends Bank {
+    fn read_parent_level(self: SubBank) -> int { return self.level; }
+}
+
+fn main() -> void {
+    let b: Bank = Bank { secret: "hidden", level: 5, name: "B1" };
+
+    // public 类外访问正常
+    println("public: " + b.name);
+
+    // private 类外读取报 RUN017
+    try { let x: string = b.secret; println("FAIL: private read no error"); }
+    catch (Exception) as e { println("PASS: private read 报 RUN017"); }
+
+    // private 类外写入报 RUN017
+    try { b.secret = "hacked"; println("FAIL: private write no error"); }
+    catch (Exception) as e { println("PASS: private write 报 RUN017"); }
+
+    // private 方法内读取正常
+    println("method read: " + b.get_secret());
+
+    // private 方法内写入正常
+    b.set_secret("new");
+    println("method write: " + b.get_secret());
+
+    // protected 类外访问输出警告但允许
+    println("protected outside: " + str(b.level));
+
+    // protected 子类内访问正常（无警告）
+    let sb: SubBank = SubBank { secret: "s", level: 7, name: "S1" };
+    println("protected subclass: " + str(sb.read_parent_level()));
+
+    println("=== access control tests done ===");
+}
