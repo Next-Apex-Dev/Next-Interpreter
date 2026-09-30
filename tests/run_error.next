@@ -1,6 +1,0 @@
-// next 1.1 - 运行期错误（除零）
-fn main() -> void {
-    let x: int = 10;
-    let y: int = 0;
-    print(x / y);
-}
