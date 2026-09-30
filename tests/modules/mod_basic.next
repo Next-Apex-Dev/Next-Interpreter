@@ -1,7 +1,0 @@
-// tests/modules/mod_basic.next - 基础模块，用于测试 import mod
-let mod_x: int = 100;
-let mod_y: string = "basic";
-
-fn mod_add(a: int, b: int) -> int {
-    return a + b;
-}

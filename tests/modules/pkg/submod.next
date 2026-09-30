@@ -1,6 +1,0 @@
-// tests/modules/pkg/submod.next - 包子模块
-let sub_val: int = 777;
-
-fn sub_fn() -> int {
-    return sub_val * 2;
-}

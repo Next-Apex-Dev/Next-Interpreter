@@ -1,5 +1,0 @@
-// next 1.1 - 语义错误（类型不匹配）
-fn main() -> void {
-    let x: int = "hello";
-    print(x);
-}

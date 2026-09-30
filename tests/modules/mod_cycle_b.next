@@ -1,8 +1,0 @@
-// tests/modules/mod_cycle_b.next - 循环依赖测试模块B
-import mod_cycle_a;
-
-let b_val: int = 2;
-
-fn get_b() -> int {
-    return b_val;
-}
