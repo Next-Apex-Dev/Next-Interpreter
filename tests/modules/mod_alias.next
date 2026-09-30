@@ -1,0 +1,6 @@
+// tests/modules/mod_alias.next - 用于测试别名导入
+let val: int = 42;
+
+fn get_val() -> int {
+    return val;
+}

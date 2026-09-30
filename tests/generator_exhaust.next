@@ -1,0 +1,95 @@
+fn gen123() -> void {
+    yield 1;
+    yield 2;
+    yield 3;
+}
+
+fn gen_empty() -> void {
+    if false {
+        yield 0;
+    }
+}
+
+fn gen_one() -> void {
+    yield 42;
+}
+
+fn main() -> void {
+    fn check(cond: bool, label: string) -> void {
+        if cond {
+            println("PASS: " + label);
+        } else {
+            println("FAIL: " + label);
+        }
+    }
+
+    let sum: int = 0;
+    let g1: any = gen123();
+    for x in g1 {
+        sum = sum + x;
+    }
+    check(sum == 6, "for-in generator produces 1+2+3=6");
+
+    let empty_sum: int = 0;
+    let g2: any = gen_empty();
+    for x in g2 {
+        empty_sum = empty_sum + x;
+    }
+    check(empty_sum == 0, "for-in empty generator produces no iterations");
+
+    let one_val: int = 0;
+    let g3: any = gen_one();
+    for x in g3 {
+        one_val = x;
+    }
+    check(one_val == 42, "for-in single-yield generator produces 42");
+
+    let g4: any = gen123();
+    let v1: int = next(g4);
+    let v2: int = next(g4);
+    let v3: int = next(g4);
+    check(v1 == 1 && v2 == 2 && v3 == 3, "next() returns yielded values in order");
+
+    let caught_stop: bool = false;
+    try {
+        let v4: int = next(g4);
+    }
+    catch (StopIteration) as e {
+        caught_stop = true;
+    }
+    check(caught_stop, "next() on exhausted generator throws StopIteration");
+
+    let caught_stop2: bool = false;
+    let g5: any = gen_one();
+    let w1: int = next(g5);
+    try {
+        let w2: int = next(g5);
+    }
+    catch (StopIteration) as e {
+        caught_stop2 = true;
+    }
+    check(caught_stop2, "single-yield generator throws StopIteration after one next()");
+
+    let caught_stop3: bool = false;
+    let g6: any = gen_empty();
+    try {
+        let u1: int = next(g6);
+    }
+    catch (StopIteration) as e {
+        caught_stop3 = true;
+    }
+    check(caught_stop3, "empty generator throws StopIteration on first next()");
+
+    let caught_stop4: bool = false;
+    let g7: any = gen123();
+    try {
+        let a: int = next(g7);
+        let b: int = next(g7);
+        let c: int = next(g7);
+        let d: int = next(g7);
+    }
+    catch (Exception) as e {
+        caught_stop4 = true;
+    }
+    check(caught_stop4, "StopIteration caught by catch (Exception) via MRO");
+}

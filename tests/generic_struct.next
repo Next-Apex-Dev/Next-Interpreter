@@ -1,0 +1,10 @@
+// next 1.1 - 泛型结构体
+struct Pair<T> {
+    first: T;
+    second: T;
+}
+
+fn main() -> void {
+    let p: Pair<int> = Pair{first: 1, second: 2};
+    print(p);
+}

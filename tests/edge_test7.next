@@ -1,0 +1,22 @@
+// 测试for循环字符串迭代和元组迭代
+fn main() -> void {
+  // 字符串迭代
+  let s: string = "abc";
+  for c in s {
+    print(c);
+  }
+  
+  // 元组迭代
+  let t: (int, int, int) = (10, 20, 30);
+  for v in t {
+    print(v);
+  }
+  
+  // 字符串迭代求和
+  let word: string = "hello";
+  let count: int = 0;
+  for c in word {
+    count = count + 1;
+  }
+  print(count);
+}
