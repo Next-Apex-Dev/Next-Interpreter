@@ -25,20 +25,9 @@ static const char* GITHUB_REPO = "Next-Apex-Dev/Next-Interpreter";
 static std::atomic<bool> g_running{true};
 static std::string g_ide_path;
 
-// objcopy嵌入的Next-IDE二进制数据
-extern "C" char _binary_Next_IDE_exe_start[];
-extern "C" char _binary_Next_IDE_exe_end[];
-
-// 释放内嵌解释器
+// 在线体验功能已移除
 std::string extract_ide() {
-    if (!g_ide_path.empty()) return g_ide_path;
-    g_ide_path = "/tmp/NextForum_IDE";
-    size_t size = _binary_Next_IDE_exe_end - _binary_Next_IDE_exe_start;
-    std::ofstream f(g_ide_path, std::ios::binary);
-    f.write(_binary_Next_IDE_exe_start, size);
-    f.close();
-    chmod(g_ide_path.c_str(), 0755);
-    return g_ide_path;
+    return "";
 }
 
 // URL解码
@@ -270,34 +259,9 @@ std::string github_edit_issue(const std::string& token, int number,
     return https_request("PATCH", path, json_body, token);
 }
 
-// 执行Next代码
+// 执行Next代码（在线体验功能已移除）
 std::string run_next_code(const std::string& code) {
-    char nextFile[] = "/tmp/nextforum_code_XXXXXX";
-    int fd = mkstemp(nextFile);
-    if (fd < 0) return "{\"error\":\"无法创建临时文件\"}";
-    write(fd, code.c_str(), code.size());
-    close(fd);
-
-    std::string idePath = extract_ide();
-    std::string outputFile = std::string(nextFile) + ".out";
-
-    pid_t pid = fork();
-    if (pid == 0) {
-        freopen(outputFile.c_str(), "w", stdout);
-        freopen(outputFile.c_str(), "a", stderr);
-        execl(idePath.c_str(), "Next-IDE", "run", nextFile, nullptr);
-        _exit(1);
-    }
-    int status;
-    waitpid(pid, &status, 0);
-
-    std::ifstream outf(outputFile);
-    std::string output((std::istreambuf_iterator<char>(outf)), std::istreambuf_iterator<char>());
-    outf.close();
-    unlink(nextFile);
-    unlink(outputFile.c_str());
-
-    return "{\"output\":\"" + json_escape(output) + "\"}";
+    return "{\"error\":\"在线体验功能已移除\"}";
 }
 
 // HTTP响应
@@ -577,6 +541,6 @@ int main() {
     g_running = false;
     usleep(200000);
     curl_global_cleanup();
-    unlink(g_ide_path.c_str());
+    if (!g_ide_path.empty()) unlink(g_ide_path.c_str());
     return 0;
 }
