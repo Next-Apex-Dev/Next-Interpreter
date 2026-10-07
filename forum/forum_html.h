@@ -6,12 +6,12 @@ inline const char* FORUM_HTML = R"HTML(<!DOCTYPE html>
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Next 寮€鏀捐鍧?/title>
+<title>Next 开放论坛</title>
 <style>
 *{margin:0;padding:0;box-sizing:border-box}
 :root{--bg:#0a0a1a;--card:#12122e;--card2:#1a1a3e;--border:#2a2a4e;--primary:#8B8CF0;--primary-dim:#4A4B8C;--text:#e0e0f0;--text-dim:#8888aa;--accent:#6C6DF0;--danger:#F06080;--success:#60F080;--warn:#F0C060}
 body{background:var(--bg);color:var(--text);font-family:system-ui,-apple-system,'Segoe UI',sans-serif;line-height:1.6;min-height:100vh}
-/* 瀵艰埅鏍?*/
+/* 导航栏 */
 nav{background:var(--card);border-bottom:1px solid var(--border);padding:0 20px;display:flex;align-items:center;gap:15px;height:60px;position:sticky;top:0;z-index:100}
 .logo{display:flex;align-items:center;gap:8px;font-size:1.3em;font-weight:bold;color:var(--primary);cursor:pointer}
 .logo svg{width:28px;height:28px}
@@ -19,33 +19,33 @@ nav .nav-links{display:flex;gap:5px;flex:1}
 nav a{color:var(--text-dim);text-decoration:none;padding:8px 12px;border-radius:6px;transition:all .2s;cursor:pointer;font-size:.95em}
 nav a:hover{color:var(--text);background:var(--border)}
 nav a.active{color:var(--primary);background:rgba(139,140,240,.1)}
-/* 鎼滅储妗?*/
+/* 搜索框 */
 .search-box{display:flex;align-items:center;gap:8px;background:var(--bg);border:1px solid var(--border);border-radius:6px;padding:6px 12px;width:220px}
 .search-box input{background:transparent;border:none;color:var(--text);outline:none;width:100%;font-size:.9em}
 .search-box svg{width:16px;height:16px;color:var(--text-dim);flex-shrink:0}
-/* 鐢ㄦ埛鍖哄煙 */
+/* 用户区域 */
 .user-area{display:flex;align-items:center;gap:10px}
 .user-avatar{width:32px;height:32px;border-radius:50%;border:2px solid var(--primary)}
 .user-name{color:var(--text);font-size:.9em}
 .btn-login{color:var(--primary);cursor:pointer;font-size:.9em;padding:6px 14px;border:1px solid var(--primary);border-radius:6px;transition:all .2s}
 .btn-login:hover{background:rgba(139,140,240,.1)}
-/* 涓诲唴瀹?*/
+/* 主内容 */
 main{max-width:1200px;margin:0 auto;padding:30px 20px}
 section{display:none}
 section.active{display:block}
-/* 棣栭〉 */
+/* 首页 */
 .hero{text-align:center;padding:60px 20px;background:linear-gradient(135deg,var(--card),var(--bg));border-radius:16px;margin-bottom:30px;border:1px solid var(--border)}
 .hero svg{width:80px;height:80px;margin-bottom:20px}
 .hero h1{font-size:2.5em;margin-bottom:10px;background:linear-gradient(135deg,var(--primary),var(--accent));-webkit-background-clip:text;-webkit-text-fill-color:transparent}
 .hero p{color:var(--text-dim);font-size:1.1em;max-width:600px;margin:0 auto 30px}
 .hero-btns{display:flex;gap:15px;justify-content:center;flex-wrap:wrap}
-/* 缁熻鍗＄墖 */
+/* 统计卡片 */
 .stats-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:16px;margin-bottom:30px}
 .stat-card{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:20px;text-align:center;transition:all .2s}
 .stat-card:hover{border-color:var(--primary);transform:translateY(-2px)}
 .stat-card .num{font-size:2em;font-weight:bold;color:var(--primary)}
 .stat-card .label{color:var(--text-dim);font-size:.9em;margin-top:5px}
-/* 鎸夐挳 */
+/* 按钮 */
 .btn{display:inline-flex;align-items:center;gap:6px;padding:10px 24px;border-radius:8px;border:none;cursor:pointer;font-size:.95em;transition:all .2s;text-decoration:none}
 .btn-primary{background:var(--primary);color:#fff}
 .btn-primary:hover{background:var(--accent);transform:translateY(-1px)}
@@ -57,7 +57,7 @@ section.active{display:block}
 .btn-success{background:var(--success);color:#000}
 .btn-sm{padding:6px 14px;font-size:.85em}
 .btn-xs{padding:4px 10px;font-size:.8em}
-/* 鍗＄墖 */
+/* 卡片 */
 .card{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:20px;margin-bottom:16px;transition:all .2s;cursor:pointer}
 .card:hover{border-color:var(--primary-dim);background:var(--card2)}
 .card h3{color:var(--primary);margin-bottom:8px}
@@ -68,11 +68,11 @@ section.active{display:block}
 .card .stats span{display:flex;align-items:center;gap:4px}
 .section-title{display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;flex-wrap:wrap;gap:10px}
 .section-title h2{color:var(--text)}
-/* 宸ュ叿鏍?*/
+/* 工具栏 */
 .toolbar{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-bottom:20px}
 .toolbar select,.toolbar input{background:var(--bg);color:var(--text);border:1px solid var(--border);border-radius:6px;padding:8px 12px;font-size:.9em;outline:none}
 .toolbar select:focus,.toolbar input:focus{border-color:var(--primary)}
-/* 浠ｇ爜缂栬緫鍣?*/
+/* 代码编辑器 */
 .editor-wrap{display:flex;flex-direction:column;gap:15px}
 .editor-toolbar{display:flex;gap:10px;align-items:center}
 textarea.code-editor{width:100%;min-height:300px;background:#0d0d1e;color:var(--text);border:1px solid var(--border);border-radius:8px;padding:15px;font-family:'Consolas','Courier New',monospace;font-size:14px;resize:vertical;line-height:1.5}
@@ -81,65 +81,65 @@ textarea.code-editor:focus{outline:none;border-color:var(--primary)}
 .output-box .label{color:var(--text-dim);font-size:.85em;margin-bottom:8px}
 .output-box .content{color:var(--success)}
 .output-box .error{color:var(--danger)}
-/* 琛ㄥ崟 */
+/* 表单 */
 .form-group{margin-bottom:15px}
 .form-group label{display:block;margin-bottom:6px;color:var(--text-dim);font-size:.9em}
 .form-group input,.form-group textarea,.form-group select{width:100%;background:var(--bg);color:var(--text);border:1px solid var(--border);border-radius:6px;padding:10px;font-size:.95em}
 .form-group input:focus,.form-group textarea:focus,.form-group select:focus{outline:none;border-color:var(--primary)}
 .form-group textarea{min-height:120px;font-family:'Consolas','Courier New',monospace;resize:vertical}
-/* 妯℃€佹 */
+/* 模态框 */
 .modal-overlay{display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,.7);z-index:200;justify-content:center;align-items:center}
 .modal-overlay.active{display:flex}
 .modal{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:25px;width:90%;max-width:600px;max-height:85vh;overflow-y:auto}
 .modal h2{color:var(--primary);margin-bottom:20px}
 .modal .close{float:right;cursor:pointer;color:var(--text-dim);font-size:1.5em;line-height:1}
 .modal .close:hover{color:var(--text)}
-/* 甯栧瓙璇︽儏 */
+/* 帖子详情 */
 .post-detail{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:30px;margin-bottom:20px}
 .post-detail h1{color:var(--primary);margin-bottom:15px;font-size:1.5em}
 .post-detail .meta{color:var(--text-dim);font-size:.9em;margin-bottom:20px;padding-bottom:15px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:12px;flex-wrap:wrap}
 .post-detail .body{color:var(--text);line-height:1.8;white-space:pre-wrap;word-break:break-word}
 .post-detail .actions{display:flex;gap:10px;margin-top:20px;padding-top:15px;border-top:1px solid var(--border)}
-/* 璇勮 */
+/* 评论 */
 .comment{background:var(--card2);border:1px solid var(--border);border-radius:8px;padding:15px;margin-bottom:12px}
 .comment .meta{color:var(--text-dim);font-size:.85em;margin-bottom:8px;display:flex;align-items:center;gap:8px}
 .comment .meta img{width:24px;height:24px;border-radius:50%}
 .comment .body{color:var(--text);white-space:pre-wrap;word-break:break-word;line-height:1.6}
 .comment-form{background:var(--card2);border:1px solid var(--border);border-radius:8px;padding:15px;margin-top:20px}
-/* 鍔犺浇鍜屾彁绀?*/
+/* 加载和提示 */
 .loading{text-align:center;padding:40px;color:var(--text-dim)}
 .toast{position:fixed;bottom:20px;right:20px;background:var(--card);border:1px solid var(--primary);border-radius:8px;padding:12px 20px;z-index:300;transition:all .3s;opacity:0;transform:translateY(20px);max-width:400px}
 .toast.show{opacity:1;transform:translateY(0)}
 .toast.error{border-color:var(--danger)}
 .toast.success{border-color:var(--success)}
-/* 涓嬭浇椤?*/
+/* 下载页 */
 .download-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:20px}
 .download-card{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:25px;text-align:center}
 .download-card h3{color:var(--primary);margin-bottom:10px}
 .download-card p{color:var(--text-dim);margin-bottom:20px;font-size:.9em}
-/* 鍒嗛〉 */
+/* 分页 */
 .pagination{display:flex;justify-content:center;gap:8px;margin-top:20px}
 .pagination button{background:var(--card);border:1px solid var(--border);color:var(--text);padding:8px 16px;border-radius:6px;cursor:pointer;transition:all .2s}
 .pagination button:hover{border-color:var(--primary)}
 .pagination button.active{background:var(--primary);color:#fff;border-color:var(--primary)}
 .pagination button:disabled{opacity:.4;cursor:not-allowed}
-/* 鏍囩 */
+/* 标签 */
 .tag{display:inline-block;padding:2px 10px;border-radius:12px;font-size:.8em;margin-right:5px;cursor:pointer;transition:all .2s}
 .tag:hover{opacity:.8}
 .tag-discussion{background:rgba(96,240,128,.15);color:var(--success)}
 .tag-bug{background:rgba(240,96,128,.15);color:var(--danger)}
 .tag-library{background:rgba(139,140,240,.15);color:var(--primary)}
 .tag-general{background:rgba(240,192,96,.15);color:var(--warn)}
-/* 鏍囩浜?*/
+/* 标签云 */
 .tag-cloud{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:20px}
 .tag-cloud .tag{font-size:1em;padding:5px 15px}
-/* 绌虹姸鎬?*/
+/* 空状态 */
 .empty{text-align:center;padding:60px;color:var(--text-dim)}
 .empty svg{width:60px;height:60px;margin-bottom:15px;opacity:.3}
-/* 杩斿洖鎸夐挳 */
+/* 返回按钮 */
 .back-btn{display:inline-flex;align-items:center;gap:6px;color:var(--text-dim);cursor:pointer;margin-bottom:15px;font-size:.9em}
 .back-btn:hover{color:var(--primary)}
-/* Markdown娓叉煋 */
+/* Markdown渲染 */
 .md h1{color:var(--primary);margin:15px 0 10px;font-size:1.4em}
 .md h2{color:var(--primary);margin:12px 0 8px;font-size:1.2em}
 .md h3{color:var(--primary);margin:10px 0 6px;font-size:1.1em}
@@ -157,7 +157,7 @@ textarea.code-editor:focus{outline:none;border-color:var(--primary)}
 .md th,.md td{border:1px solid var(--border);padding:8px;text-align:left}
 .md th{background:var(--card2)}
 .md hr{border:none;border-top:1px solid var(--border);margin:15px 0}
-/* 鍝嶅簲寮?*/
+/* 响应式 */
 @media(max-width:768px){nav{flex-wrap:wrap;height:auto;padding:10px}nav .nav-links{order:3;width:100%}nav a{font-size:.85em;padding:6px 8px}.hero h1{font-size:1.8em}.search-box{width:150px}.stats-grid{grid-template-columns:repeat(2,1fr)}}
 </style>
 </head>
@@ -165,175 +165,175 @@ textarea.code-editor:focus{outline:none;border-color:var(--primary)}
 <nav>
 <div class="logo" onclick="routeTo('home')">
 <svg viewBox="0 0 100 50"><path d="M10,8 L38,25 L10,42" stroke="#8B8CF0" stroke-width="7" fill="none" stroke-linecap="round" stroke-linejoin="round"/><path d="M52,8 L80,25 L52,42" stroke="#4A4B8C" stroke-width="7" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>
-<span>Next 璁哄潧</span>
+<span>Next 论坛</span>
 </div>
 <div class="nav-links">
-<a data-route="home" class="active">棣栭〉</a>
-<a data-route="download">涓嬭浇</a>
+<a data-route="home" class="active">首页</a>
+<a data-route="download">下载</a>
 
-<a data-route="forum">鎶€鏈氦娴?/a>
-<a data-route="bugs">婕忔礊鎶ュ憡</a>
-<a data-route="libs">绗笁鏂瑰簱</a>
+<a data-route="forum">技术交流</a>
+<a data-route="bugs">漏洞报告</a>
+<a data-route="libs">第三方库</a>
 </div>
 <div class="search-box">
 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
-<input type="text" id="search-input" placeholder="鎼滅储甯栧瓙..." onkeydown="if(event.key==='Enter')doSearch()">
+<input type="text" id="search-input" placeholder="搜索帖子..." onkeydown="if(event.key==='Enter')doSearch()">
 </div>
 <div class="user-area" id="user-area">
-<span class="btn-login" onclick="openLoginModal()">鐧诲綍</span>
+<span class="btn-login" onclick="openLoginModal()">登录</span>
 </div>
 </nav>
 <main>
-<!-- 棣栭〉 -->
+<!-- 首页 -->
 <section id="home" class="active">
 <div class="hero">
 <svg viewBox="0 0 100 50"><path d="M10,8 L38,25 L10,42" stroke="#8B8CF0" stroke-width="7" fill="none" stroke-linecap="round" stroke-linejoin="round"/><path d="M52,8 L80,25 L52,42" stroke="#4A4B8C" stroke-width="7" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>
-<h1>Next 缂栫▼璇█</h1>
-<p>Next 鏄竴闂ㄧ畝娲併€侀珮鏁堢殑宓屽叆寮忚剼鏈瑷€锛屾敮鎸佸嚱鏁板紡缂栫▼銆侀潰鍚戝璞°€佺敓鎴愬櫒銆佸崗绋嬨€佸紓姝O绛夌幇浠ｈ瑷€鐗规€с€?/p>
+<h1>Next 编程语言</h1>
+<p>Next 是一门简洁、高效的嵌入式脚本语言，支持函数式编程、面向对象、生成器、协程、异步IO等现代语言特性。</p>
 <div class="hero-btns">
-<a class="btn btn-primary" data-route="download">涓嬭浇婧愮爜</a>
+<a class="btn btn-primary" data-route="download">下载源码</a>
 
-<a class="btn btn-outline" data-route="forum">鍙備笌璁ㄨ</a>
+<a class="btn btn-outline" data-route="forum">参与讨论</a>
 </div>
 </div>
-<div class="stats-grid" id="stats-grid"><div class="loading">鍔犺浇缁熻涓?..</div></div>
-<div class="section-title"><h2>鏈€鏂拌璁?/h2><a class="btn btn-outline btn-sm" data-route="forum">鏌ョ湅鍏ㄩ儴</a></div>
-<div id="home-posts"><div class="loading">鍔犺浇涓?..</div></div>
+<div class="stats-grid" id="stats-grid"><div class="loading">加载统计中...</div></div>
+<div class="section-title"><h2>最新讨论</h2><a class="btn btn-outline btn-sm" data-route="forum">查看全部</a></div>
+<div id="home-posts"><div class="loading">加载中...</div></div>
 </section>
-<!-- 涓嬭浇 -->
+<!-- 下载 -->
 <section id="download">
-<div class="section-title"><h2>涓嬭浇 Next 瑙ｉ噴鍣?/h2></div>
+<div class="section-title"><h2>下载 Next 解释器</h2></div>
 <div class="download-grid">
 <div class="download-card">
-<h3>婧愪唬鐮?/h3>
-<p>浠?GitHub 鑾峰彇瀹屾暣婧愮爜锛岃嚜琛岀紪璇戞瀯寤?/p>
-<a class="btn btn-primary" href="https://github.com/Next-Apex-Dev/Next-Interpreter" target="_blank">GitHub 浠撳簱</a>
+<h3>源代码</h3>
+<p>从 GitHub 获取完整源码，自行编译构建</p>
+<a class="btn btn-primary" href="https://github.com/Next-Apex-Dev/Next-Interpreter" target="_blank">GitHub 仓库</a>
 </div>
 <div class="download-card">
-<h3>鍙墽琛屾枃浠?/h3>
-<p>涓嬭浇棰勭紪璇戠殑 Next-IDE.exe锛屽紑绠卞嵆鐢?/p>
+<h3>可执行文件</h3>
+<p>下载预编译的 Next-IDE.exe，开箱即用</p>
 <a class="btn btn-primary" href="https://github.com/Next-Apex-Dev/Next-Interpreter/releases" target="_blank">Releases</a>
 </div>
 <div class="download-card">
-<h3>缂栬瘧璇存槑</h3>
-<p>闇€瑕?C++20 缂栬瘧鍣紙GCC 13+ / MSVC 2022+锛?/p>
-<a class="btn btn-outline" href="https://github.com/Next-Apex-Dev/Next-Interpreter#缂栬瘧璇存槑" target="_blank">鏌ョ湅鏂囨。</a>
+<h3>编译说明</h3>
+<p>需要 C++20 编译器（GCC 13+ / MSVC 2022+）</p>
+<a class="btn btn-outline" href="https://github.com/Next-Apex-Dev/Next-Interpreter#编译说明" target="_blank">查看文档</a>
 </div>
 <div class="download-card">
-<h3>璁哄潧妗岄潰搴旂敤</h3>
-<p>NextForum.exe 闆朵緷璧栧崟鏂囦欢锛屽唴缃В閲婂櫒</p>
-<a class="btn btn-outline" href="https://github.com/Next-Apex-Dev/Next-Interpreter/releases" target="_blank">涓嬭浇璁哄潧</a>
+<h3>论坛桌面应用</h3>
+<p>NextForum.exe 零依赖单文件，内置解释器</p>
+<a class="btn btn-outline" href="https://github.com/Next-Apex-Dev/Next-Interpreter/releases" target="_blank">下载论坛</a>
 </div>
 </div>
 </section>
 
-<!-- 鎶€鏈氦娴?-->
+<!-- 技术交流 -->
 <section id="forum">
-<div class="section-title"><h2>鎶€鏈氦娴?/h2><button class="btn btn-primary btn-sm" onclick="openPostModal('discussion')">鍙戝笘</button></div>
+<div class="section-title"><h2>技术交流</h2><button class="btn btn-primary btn-sm" onclick="openPostModal('discussion')">发帖</button></div>
 <div class="toolbar">
 <select id="forum-sort" onchange="reloadList('forum-posts','discussion')">
-<option value="created">鏈€鏂板垱寤?/option>
-<option value="updated">鏈€杩戞洿鏂?/option>
-<option value="comments">鏈€澶氳瘎璁?/option>
+<option value="created">最新创建</option>
+<option value="updated">最近更新</option>
+<option value="comments">最多评论</option>
 </select>
 <span style="color:var(--text-dim);font-size:.85em" id="forum-count"></span>
 </div>
-<div id="forum-posts"><div class="loading">鍔犺浇涓?..</div></div>
+<div id="forum-posts"><div class="loading">加载中...</div></div>
 <div class="pagination" id="forum-pagination"></div>
 </section>
-<!-- 婕忔礊鎶ュ憡 -->
+<!-- 漏洞报告 -->
 <section id="bugs">
-<div class="section-title"><h2>婕忔礊鎶ュ憡</h2><button class="btn btn-danger btn-sm" onclick="openPostModal('bug')">鎻愪氦鎶ュ憡</button></div>
+<div class="section-title"><h2>漏洞报告</h2><button class="btn btn-danger btn-sm" onclick="openPostModal('bug')">提交报告</button></div>
 <div class="toolbar">
 <select id="bugs-sort" onchange="reloadList('bug-posts','bug')">
-<option value="created">鏈€鏂板垱寤?/option>
-<option value="updated">鏈€杩戞洿鏂?/option>
-<option value="comments">鏈€澶氳瘎璁?/option>
+<option value="created">最新创建</option>
+<option value="updated">最近更新</option>
+<option value="comments">最多评论</option>
 </select>
 <span style="color:var(--text-dim);font-size:.85em" id="bugs-count"></span>
 </div>
-<div id="bug-posts"><div class="loading">鍔犺浇涓?..</div></div>
+<div id="bug-posts"><div class="loading">加载中...</div></div>
 <div class="pagination" id="bugs-pagination"></div>
 </section>
-<!-- 绗笁鏂瑰簱 -->
+<!-- 第三方库 -->
 <section id="libs">
-<div class="section-title"><h2>绗笁鏂瑰簱</h2><button class="btn btn-primary btn-sm" onclick="openPostModal('library')">鎻愪氦搴?/button></div>
+<div class="section-title"><h2>第三方库</h2><button class="btn btn-primary btn-sm" onclick="openPostModal('library')">提交库</button></div>
 <div class="toolbar">
 <select id="libs-sort" onchange="reloadList('lib-posts','library')">
-<option value="created">鏈€鏂板垱寤?/option>
-<option value="updated">鏈€杩戞洿鏂?/option>
-<option value="comments">鏈€澶氳瘎璁?/option>
+<option value="created">最新创建</option>
+<option value="updated">最近更新</option>
+<option value="comments">最多评论</option>
 </select>
 <span style="color:var(--text-dim);font-size:.85em" id="libs-count"></span>
 </div>
-<div id="lib-posts"><div class="loading">鍔犺浇涓?..</div></div>
+<div id="lib-posts"><div class="loading">加载中...</div></div>
 <div class="pagination" id="libs-pagination"></div>
 </section>
-<!-- 甯栧瓙璇︽儏 -->
+<!-- 帖子详情 -->
 <section id="detail">
-<span class="back-btn" onclick="goBack()">鈫?杩斿洖</span>
-<div id="detail-content"><div class="loading">鍔犺浇涓?..</div></div>
+<span class="back-btn" onclick="goBack()">← 返回</span>
+<div id="detail-content"><div class="loading">加载中...</div></div>
 </section>
-<!-- 鎼滅储缁撴灉 -->
+<!-- 搜索结果 -->
 <section id="search">
-<div class="section-title"><h2>鎼滅储缁撴灉</h2><span class="back-btn" onclick="routeTo('home')">鈫?杩斿洖棣栭〉</span></div>
-<div id="search-results"><div class="loading">鎼滅储涓?..</div></div>
+<div class="section-title"><h2>搜索结果</h2><span class="back-btn" onclick="routeTo('home')">← 返回首页</span></div>
+<div id="search-results"><div class="loading">搜索中...</div></div>
 </section>
 </main>
-<!-- 鐧诲綍妯℃€佹 -->
+<!-- 登录模态框 -->
 <div class="modal-overlay" id="login-modal">
 <div class="modal">
 <span class="close" onclick="closeLoginModal()">&times;</span>
-<h2>GitHub 鐧诲綍</h2>
+<h2>GitHub 登录</h2>
 <div class="form-group">
 <label>GitHub Personal Access Token</label>
 <input type="password" id="login-token" placeholder="ghp_xxxxxxxxxxxx">
 </div>
 <p style="color:var(--text-dim);font-size:.85em;margin-bottom:15px">
-璇峰埌 GitHub Settings > Developer settings > Personal access tokens > Tokens (classic) 鐢熸垚<br>
-闇€瑕?<strong>repo</strong> 鏉冮檺锛堢敤浜庡彂甯栥€佽瘎璁恒€佺偣璧烇級<br>
-Token 浠呬繚瀛樺湪娴忚鍣ㄦ湰鍦帮紝涓嶄細涓婁紶鍒版湇鍔″櫒
+请到 GitHub Settings > Developer settings > Personal access tokens > Tokens (classic) 生成<br>
+需要 <strong>repo</strong> 权限（用于发帖、评论、点赞）<br>
+Token 仅保存在浏览器本地，不会上传到服务器
 </p>
-<button class="btn btn-primary" id="login-btn">鐧诲綍</button>
+<button class="btn btn-primary" id="login-btn">登录</button>
 </div>
 </div>
-<!-- 鍙戝笘妯℃€佹 -->
+<!-- 发帖模态框 -->
 <div class="modal-overlay" id="post-modal">
 <div class="modal">
 <span class="close" onclick="closePostModal()">&times;</span>
-<h2 id="post-modal-title">鍙戝笘</h2>
+<h2 id="post-modal-title">发帖</h2>
 <div class="form-group">
-<label>鏍囬</label>
-<input type="text" id="post-title" placeholder="璇疯緭鍏ユ爣棰橈紙鏈€澶?00瀛楋級" maxlength="100">
+<label>标题</label>
+<input type="text" id="post-title" placeholder="请输入标题（最多100字）" maxlength="100">
 </div>
 <div class="form-group">
-<label>鍐呭锛堟敮鎸?Markdown锛?/label>
-<textarea id="post-body" placeholder="璇疯緭鍏ュ唴瀹?..&#10;&#10;鏀寔 Markdown 璇硶锛?#10;# 鏍囬&#10;**绮椾綋** *鏂滀綋* `浠ｇ爜`&#10;```浠ｇ爜鍧梎``&#10;- 鍒楄〃椤?#10;[閾炬帴](url)"></textarea>
+<label>内容（支持 Markdown）</label>
+<textarea id="post-body" placeholder="请输入内容...&#10;&#10;支持 Markdown 语法：&#10;# 标题&#10;**粗体** *斜体* `代码`&#10;```代码块```&#10;- 列表项&#10;[链接](url)"></textarea>
 </div>
 <div class="form-group" id="lib-url-group" style="display:none">
-<label>搴撻摼鎺ワ紙鍙€夛級</label>
+<label>库链接（可选）</label>
 <input type="text" id="lib-url" placeholder="https://github.com/xxx/my-next-lib">
 </div>
-<button class="btn btn-primary" id="submit-post">鎻愪氦</button>
+<button class="btn btn-primary" id="submit-post">提交</button>
 </div>
 </div>
-<!-- 缂栬緫妯℃€佹 -->
+<!-- 编辑模态框 -->
 <div class="modal-overlay" id="edit-modal">
 <div class="modal">
 <span class="close" onclick="closeEditModal()">&times;</span>
-<h2>缂栬緫甯栧瓙</h2>
+<h2>编辑帖子</h2>
 <div class="form-group">
-<label>鏍囬</label>
+<label>标题</label>
 <input type="text" id="edit-title" maxlength="100">
 </div>
 <div class="form-group">
-<label>鍐呭锛堟敮鎸?Markdown锛?/label>
+<label>内容（支持 Markdown）</label>
 <textarea id="edit-body"></textarea>
 </div>
-<button class="btn btn-primary" id="submit-edit">淇濆瓨</button>
+<button class="btn btn-primary" id="submit-edit">保存</button>
 </div>
 </div>
-<!-- 鎻愮ず -->
+<!-- 提示 -->
 <div class="toast" id="toast"></div>
 <script>
 const API_BASE='';
@@ -345,7 +345,7 @@ let currentDetailNumber=0;
 let lastRoute='home';
 
 
-// === 宸ュ叿鍑芥暟 ===
+// === 工具函数 ===
 function showToast(msg,isError){
 const t=document.getElementById('toast');
 t.textContent=msg;
@@ -358,49 +358,53 @@ function timeAgo(d){
 if(!d)return'';
 const now=new Date();const then=new Date(d);
 const diff=(now-then)/1000;
-if(diff<60)return'鍒氬垰';
-if(diff<3600)return Math.floor(diff/60)+'鍒嗛挓鍓?;
-if(diff<86400)return Math.floor(diff/3600)+'灏忔椂鍓?;
-if(diff<2592000)return Math.floor(diff/86400)+'澶╁墠';
+if(diff<60)return'刚刚';
+if(diff<3600)return Math.floor(diff/60)+'分钟前';
+if(diff<86400)return Math.floor(diff/3600)+'小时前';
+if(diff<2592000)return Math.floor(diff/86400)+'天前';
 return formatDate(d);
 }
 
-// === Markdown娓叉煋 ===
+// === Markdown渲染 ===
 function renderMarkdown(text){
 if(!text)return'';
 let html=escapeHtml(text);
-// 浠ｇ爜鍧?html=html.replace(/```(\w*)\n?([\s\S]*?)```/g,(m,lang,code)=>'<pre><code>'+code+'</code></pre>');
-// 鏍囬
+// 代码块
+html=html.replace(/```(\w*)\n?([\s\S]*?)```/g,(m,lang,code)=>'<pre><code>'+code+'</code></pre>');
+// 标题
 html=html.replace(/^### (.+)$/gm,'<h3>$1</h3>');
 html=html.replace(/^## (.+)$/gm,'<h2>$1</h2>');
 html=html.replace(/^# (.+)$/gm,'<h1>$1</h1>');
-// 绮椾綋鍜屾枩浣?html=html.replace(/\*\*(.+?)\*\*/g,'<strong>$1</strong>');
+// 粗体和斜体
+html=html.replace(/\*\*(.+?)\*\*/g,'<strong>$1</strong>');
 html=html.replace(/\*(.+?)\*/g,'<em>$1</em>');
-// 琛屽唴浠ｇ爜
+// 行内代码
 html=html.replace(/`(.+?)`/g,'<code>$1</code>');
-// 鍥剧墖锛堝厛浜庨摼鎺ュ鐞嗭級
+// 图片（先于链接处理）
 html=html.replace(/!\[(.+?)\]\((.+?)\)/g,'<img src="$2" alt="$1">');
-// 閾炬帴
+// 链接
 html=html.replace(/\[(.+?)\]\((.+?)\)/g,'<a href="$2" target="_blank">$1</a>');
-// 寮曠敤
+// 引用
 html=html.replace(/^&gt; (.+)$/gm,'<blockquote>$1</blockquote>');
-// 鏃犲簭鍒楄〃
+// 无序列表
 html=html.replace(/^- (.+)$/gm,'<li class="ul">$1</li>');
 html=html.replace(/(<li class="ul">[\s\S]*?<\/li>)/g,'<ul>$1</ul>');
-// 鏈夊簭鍒楄〃
+// 有序列表
 html=html.replace(/^\d+\. (.+)$/gm,'<li class="ol">$1</li>');
 html=html.replace(/(<li class="ol">[\s\S]*?<\/li>)/g,'<ol>$1</ol>');
-// 鍒嗛殧绾?html=html.replace(/^---$/gm,'<hr>');
-// 娈佃惤锛堣烦杩噋re/ul/ol/blockquote鍐呯殑鎹㈣锛?html=html.replace(/\n\n/g,'</p><p>');
+// 分隔线
+html=html.replace(/^---$/gm,'<hr>');
+// 段落（跳过pre/ul/ol/blockquote内的换行）
+html=html.replace(/\n\n/g,'</p><p>');
 html='<p>'+html+'</p>';
-// 娓呯悊绌烘钀藉拰鍧楀厓绱犲鐨勫浣檖鏍囩
+// 清理空段落和块元素外的多余p标签
 html=html.replace(/<p>\s*<\/p>/g,'');
 html=html.replace(/<p>\s*(<(?:ul|ol|pre|blockquote|hr)[\s\S]*?<\/(?:ul|ol|pre|blockquote)>)\s*<\/p>/g,'$1');
 html=html.replace(/<p>\s*(<hr>)\s*<\/p>/g,'$1');
 return '<div class="md">'+html+'</div>';
 }
 
-// === 鐢ㄦ埛绠＄悊 ===
+// === 用户管理 ===
 function updateUserUI(){
 const area=document.getElementById('user-area');
 if(userToken){
@@ -409,14 +413,14 @@ fetch(API_BASE+'/api/user?token='+encodeURIComponent(userToken))
 if(data.login){
 currentUser=data;
 localStorage.setItem('github_token',userToken);
-area.innerHTML='<img class="user-avatar" src="'+escapeHtml(data.avatar_url)+'" title="'+escapeHtml(data.login)+'"><span class="user-name">'+escapeHtml(data.login)+'</span><span class="btn-login" onclick="logout()">閫€鍑?/span>';
+area.innerHTML='<img class="user-avatar" src="'+escapeHtml(data.avatar_url)+'" title="'+escapeHtml(data.login)+'"><span class="user-name">'+escapeHtml(data.login)+'</span><span class="btn-login" onclick="logout()">退出</span>';
 }else{
-showToast('Token鏃犳晥锛岃閲嶆柊鐧诲綍',true);
+showToast('Token无效，请重新登录',true);
 logout();
 }
 }).catch(()=>{});
 }else{
-area.innerHTML='<span class="btn-login" onclick="openLoginModal()">鐧诲綍</span>';
+area.innerHTML='<span class="btn-login" onclick="openLoginModal()">登录</span>';
 }
 }
 function logout(){
@@ -424,7 +428,7 @@ userToken='';
 currentUser=null;
 localStorage.removeItem('github_token');
 updateUserUI();
-showToast('宸查€€鍑虹櫥褰?);
+showToast('已退出登录');
 }
 function openLoginModal(){
 if(userToken){logout();return;}
@@ -434,28 +438,28 @@ document.getElementById('login-modal').classList.add('active');
 function closeLoginModal(){document.getElementById('login-modal').classList.remove('active');}
 document.getElementById('login-btn').addEventListener('click',()=>{
 const token=document.getElementById('login-token').value.trim();
-if(!token){showToast('璇疯緭鍏oken',true);return;}
+if(!token){showToast('请输入Token',true);return;}
 userToken=token;
 const btn=document.getElementById('login-btn');
-btn.textContent='楠岃瘉涓?..';btn.disabled=true;
+btn.textContent='验证中...';btn.disabled=true;
 fetch(API_BASE+'/api/user?token='+encodeURIComponent(token))
 .then(r=>r.json()).then(data=>{
-btn.textContent='鐧诲綍';btn.disabled=false;
+btn.textContent='登录';btn.disabled=false;
 if(data.login){
 currentUser=data;
 localStorage.setItem('github_token',token);
 updateUserUI();
 closeLoginModal();
-showToast('娆㈣繋锛?+data.login+'锛?);
+showToast('欢迎，'+data.login+'！');
 }else{
-showToast('Token鏃犳晥',true);
+showToast('Token无效',true);
 userToken='';
 }
-}).catch(e=>{btn.textContent='鐧诲綍';btn.disabled=false;showToast('缃戠粶閿欒',true);});
+}).catch(e=>{btn.textContent='登录';btn.disabled=false;showToast('网络错误',true);});
 });
 document.getElementById('login-modal').addEventListener('click',e=>{if(e.target.id==='login-modal')closeLoginModal();});
 
-// === 璺敱 ===
+// === 路由 ===
 function routeTo(route){
 lastRoute=route;
 document.querySelectorAll('section').forEach(s=>s.classList.remove('active'));
@@ -477,7 +481,7 @@ document.querySelectorAll('[data-route]').forEach(el=>{
 el.addEventListener('click',e=>{e.preventDefault();routeTo(el.dataset.route);});
 });
 
-// === 缁熻淇℃伅 ===
+// === 统计信息 ===
 function loadStats(){
 fetch(API_BASE+'/api/stats').then(r=>r.json()).then(data=>{
 const grid=document.getElementById('stats-grid');
@@ -487,10 +491,10 @@ const dc=parseInt(data.discussion_count)||0;
 const bc=parseInt(data.bug_count)||0;
 const lc=parseInt(data.library_count)||0;
 const total=dc+bc+lc;
-html+='<div class="stat-card"><div class="num">'+total+'</div><div class="label">鎬诲笘瀛愭暟</div></div>';
-html+='<div class="stat-card"><div class="num">'+dc+'</div><div class="label">鎶€鏈璁?/div></div>';
-html+='<div class="stat-card"><div class="num">'+bc+'</div><div class="label">婕忔礊鎶ュ憡</div></div>';
-html+='<div class="stat-card"><div class="num">'+lc+'</div><div class="label">绗笁鏂瑰簱</div></div>';
+html+='<div class="stat-card"><div class="num">'+total+'</div><div class="label">总帖子数</div></div>';
+html+='<div class="stat-card"><div class="num">'+dc+'</div><div class="label">技术讨论</div></div>';
+html+='<div class="stat-card"><div class="num">'+bc+'</div><div class="label">漏洞报告</div></div>';
+html+='<div class="stat-card"><div class="num">'+lc+'</div><div class="label">第三方库</div></div>';
 if(data.repo){
 const stars=data.repo.stargazers_count||0;
 const forks=data.repo.forks_count||0;
@@ -501,7 +505,7 @@ grid.innerHTML=html;
 }).catch(()=>{document.getElementById('stats-grid').innerHTML='';});
 }
 
-// === 甯栧瓙鍒楄〃 ===
+// === 帖子列表 ===
 function reloadList(containerId,label){
 const sortSel=document.getElementById(label==='discussion'?'forum-sort':label==='bug'?'bugs-sort':'libs-sort');
 const sort=sortSel?sortSel.value:'created';
@@ -514,17 +518,17 @@ page=page||1;
 currentPage[label]=page;
 const c=document.getElementById(containerId);
 if(!c)return;
-c.innerHTML='<div class="loading">鍔犺浇涓?..</div>';
+c.innerHTML='<div class="loading">加载中...</div>';
 let url=API_BASE+'/api/issues?labels='+label+'&sort='+sort+'&page='+page+'&per_page='+(limit||20);
 fetch(url).then(r=>r.json()).then(data=>{
 if(data.error){c.innerHTML='<div class="loading">'+escapeHtml(data.error)+'</div>';return;}
 renderPosts(containerId,data,limit,label,sort,page);
-}).catch(e=>{c.innerHTML='<div class="loading">缃戠粶閿欒锛岃妫€鏌ヨ繛鎺?/div>';});
+}).catch(e=>{c.innerHTML='<div class="loading">网络错误，请检查连接</div>';});
 }
 function renderPosts(containerId,posts,limit,label,sort,page){
 const c=document.getElementById(containerId);
 if(!posts||posts.length===0){
-c.innerHTML='<div class="empty"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M19 5v14H5V5h14m0-2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2z"/></svg><p>鏆傛棤鍐呭锛屽揩鏉ュ彂甯冪涓€鏉″惂锛?/p></div>';
+c.innerHTML='<div class="empty"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M19 5v14H5V5h14m0-2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2z"/></svg><p>暂无内容，快来发布第一条吧！</p></div>';
 return;
 }
 let html='';
@@ -541,17 +545,17 @@ const hearts=reactions.heart||0;
 const num=p.number||0;
 html+=`<div class="card" onclick="showDetail(${num})">
 <h3>${escapeHtml(p.title)}</h3>
-<div class="meta">${avatar?'<img class="user-avatar" style="width:20px;height:20px" src="'+escapeHtml(avatar)+'">':''} <span>${escapeHtml(user)}</span> 路 <span>${date}</span> ${labelTag}</div>
+<div class="meta">${avatar?'<img class="user-avatar" style="width:20px;height:20px" src="'+escapeHtml(avatar)+'">':''} <span>${escapeHtml(user)}</span> · <span>${date}</span> ${labelTag}</div>
 <div class="body">${escapeHtml(p.body?p.body.substring(0,300):'')}</div>
-<div class="stats"><span>馃挰 ${comments}</span><span>馃憤 ${likes}</span><span>鉂わ笍 ${hearts}</span></div>
+<div class="stats"><span>💬 ${comments}</span><span>👍 ${likes}</span><span>❤️ ${hearts}</span></div>
 </div>`;
 }
 c.innerHTML=html;
-// 鏇存柊璁℃暟
+// 更新计数
 const countId=label==='discussion'?'forum-count':label==='bug'?'bugs-count':'libs-count';
 const countEl=document.getElementById(countId);
-if(countEl)countEl.textContent=posts.length+' 鏉＄粨鏋?;
-// 鍒嗛〉
+if(countEl)countEl.textContent=posts.length+' 条结果';
+// 分页
 if(!limit){
 const pagId=label==='discussion'?'forum-pagination':label==='bug'?'bugs-pagination':'libs-pagination';
 renderPagination(pagId,label,sort,page,posts.length);
@@ -562,13 +566,13 @@ const el=document.getElementById(pagId);
 if(!el)return;
 if(page<=1&&count<20){el.innerHTML='';return;}
 let html='';
-if(page>1) html+='<button onclick="loadPosts(\''+(label==='discussion'?'forum-posts':label==='bug'?'bug-posts':'lib-posts')+'\',\''+label+'\',0,\''+sort+'\','+(page-1)+')">涓婁竴椤?/button>';
+if(page>1) html+='<button onclick="loadPosts(\''+(label==='discussion'?'forum-posts':label==='bug'?'bug-posts':'lib-posts')+'\',\''+label+'\',0,\''+sort+'\','+(page-1)+')">上一页</button>';
 html+='<button class="active">'+page+'</button>';
-if(count>=20) html+='<button onclick="loadPosts(\''+(label==='discussion'?'forum-posts':label==='bug'?'bug-posts':'lib-posts')+'\',\''+label+'\',0,\''+sort+'\','+(page+1)+')">涓嬩竴椤?/button>';
+if(count>=20) html+='<button onclick="loadPosts(\''+(label==='discussion'?'forum-posts':label==='bug'?'bug-posts':'lib-posts')+'\',\''+label+'\',0,\''+sort+'\','+(page+1)+')">下一页</button>';
 el.innerHTML=html;
 }
 
-// === 甯栧瓙璇︽儏 ===
+// === 帖子详情 ===
 function showDetail(number){
 if(!number)return;
 currentDetailNumber=number;
@@ -576,7 +580,7 @@ lastRoute=document.querySelector('section.active')?document.querySelector('secti
 document.querySelectorAll('section').forEach(s=>s.classList.remove('active'));
 document.getElementById('detail').classList.add('active');
 const content=document.getElementById('detail-content');
-content.innerHTML='<div class="loading">鍔犺浇涓?..</div>';
+content.innerHTML='<div class="loading">加载中...</div>';
 fetch(API_BASE+'/api/issue?number='+number).then(r=>r.json()).then(post=>{
 if(post.error){content.innerHTML='<div class="loading">'+escapeHtml(post.error)+'</div>';return;}
 const user=post.user?post.user.login:'unknown';
@@ -590,83 +594,83 @@ let labelHtml='';
 for(const l of labels){labelHtml+='<span class="tag tag-'+escapeHtml(l.name)+'">'+escapeHtml(l.name)+'</span>';}
 let editBtn='';
 if(currentUser&&post.user&&currentUser.login===post.user.login){
-editBtn='<button class="btn btn-outline btn-sm" onclick="openEditModal('+number+')">缂栬緫</button>';
+editBtn='<button class="btn btn-outline btn-sm" onclick="openEditModal('+number+')">编辑</button>';
 }
 let html='<div class="post-detail">';
 html+='<h1>'+escapeHtml(post.title)+'</h1>';
-html+='<div class="meta">'+(avatar?'<img class="user-avatar" src="'+escapeHtml(avatar)+'">':'')+' <span>'+escapeHtml(user)+'</span> 路 <span>'+date+'</span> '+labelHtml+'</div>';
+html+='<div class="meta">'+(avatar?'<img class="user-avatar" src="'+escapeHtml(avatar)+'">':'')+' <span>'+escapeHtml(user)+'</span> · <span>'+date+'</span> '+labelHtml+'</div>';
 html+='<div class="body">'+renderMarkdown(post.body||'')+'</div>';
 html+='<div class="actions">';
-html+='<button class="btn btn-outline btn-sm" onclick="addReaction('+number+',\'heart\')">鉂わ笍 '+hearts+'</button>';
-html+='<button class="btn btn-outline btn-sm" onclick="addReaction('+number+',\'+1\')">馃憤 '+likes+'</button>';
+html+='<button class="btn btn-outline btn-sm" onclick="addReaction('+number+',\'heart\')">❤️ '+hearts+'</button>';
+html+='<button class="btn btn-outline btn-sm" onclick="addReaction('+number+',\'+1\')">👍 '+likes+'</button>';
 html+=editBtn;
-html+='<a class="btn btn-outline btn-sm" href="'+escapeHtml(post.html_url)+'" target="_blank">鍦℅itHub鏌ョ湅</a>';
+html+='<a class="btn btn-outline btn-sm" href="'+escapeHtml(post.html_url)+'" target="_blank">在GitHub查看</a>';
 html+='</div>';
 html+='</div>';
-html+='<div class="section-title"><h2>璇勮 ('+(post.comments||0)+')</h2></div>';
-html+='<div id="comments-list"><div class="loading">鍔犺浇璇勮...</div></div>';
+html+='<div class="section-title"><h2>评论 ('+(post.comments||0)+')</h2></div>';
+html+='<div id="comments-list"><div class="loading">加载评论...</div></div>';
 if(userToken){
 html+='<div class="comment-form">';
-html+='<div class="form-group"><label>鍙戣〃璇勮锛堟敮鎸丮arkdown锛?/label>';
-html+='<textarea id="comment-input" placeholder="鍐欎笅浣犵殑璇勮..."></textarea></div>';
-html+='<button class="btn btn-primary btn-sm" onclick="submitComment('+number+')">鍙戦€?/button>';
+html+='<div class="form-group"><label>发表评论（支持Markdown）</label>';
+html+='<textarea id="comment-input" placeholder="写下你的评论..."></textarea></div>';
+html+='<button class="btn btn-primary btn-sm" onclick="submitComment('+number+')">发送</button>';
 html+='</div>';
 }else{
-html+='<div class="comment-form"><p style="color:var(--text-dim)">璇峰厛<a class="btn-login" onclick="openLoginModal()">鐧诲綍</a>鍚庡彂琛ㄨ瘎璁?/p></div>';
+html+='<div class="comment-form"><p style="color:var(--text-dim)">请先<a class="btn-login" onclick="openLoginModal()">登录</a>后发表评论</p></div>';
 }
 content.innerHTML=html;
 loadComments(number);
-}).catch(e=>{content.innerHTML='<div class="loading">缃戠粶閿欒</div>';});
+}).catch(e=>{content.innerHTML='<div class="loading">网络错误</div>';});
 }
 function loadComments(number){
 fetch(API_BASE+'/api/comments?number='+number).then(r=>r.json()).then(data=>{
 const list=document.getElementById('comments-list');
 if(!list)return;
-if(!data||data.length===0){list.innerHTML='<div class="empty"><p>鏆傛棤璇勮锛屽揩鏉ュ彂琛ㄧ涓€鏉″惂锛?/p></div>';return;}
+if(!data||data.length===0){list.innerHTML='<div class="empty"><p>暂无评论，快来发表第一条吧！</p></div>';return;}
 let html='';
 for(const c of data){
 const user=c.user?c.user.login:'unknown';
 const avatar=c.user?c.user.avatar_url:'';
 const date=timeAgo(c.created_at);
-html+='<div class="comment"><div class="meta">'+(avatar?'<img src="'+escapeHtml(avatar)+'">':'')+' <strong>'+escapeHtml(user)+'</strong> 路 '+date+'</div><div class="body">'+renderMarkdown(c.body||'')+'</div></div>';
+html+='<div class="comment"><div class="meta">'+(avatar?'<img src="'+escapeHtml(avatar)+'">':'')+' <strong>'+escapeHtml(user)+'</strong> · '+date+'</div><div class="body">'+renderMarkdown(c.body||'')+'</div></div>';
 }
 list.innerHTML=html;
-}).catch(()=>{const list=document.getElementById('comments-list');if(list)list.innerHTML='<div class="loading">鍔犺浇璇勮澶辫触</div>';});
+}).catch(()=>{const list=document.getElementById('comments-list');if(list)list.innerHTML='<div class="loading">加载评论失败</div>';});
 }
 function submitComment(number){
-if(!userToken){showToast('璇峰厛鐧诲綍',true);return;}
+if(!userToken){showToast('请先登录',true);return;}
 const body=document.getElementById('comment-input').value.trim();
-if(!body){showToast('璇勮鍐呭涓嶈兘涓虹┖',true);return;}
+if(!body){showToast('评论内容不能为空',true);return;}
 fetch(API_BASE+'/api/comment',{
 method:'POST',headers:{'Content-Type':'application/json'},
 body:JSON.stringify({token:userToken,number,body})
 }).then(r=>r.json()).then(data=>{
 if(data.error){showToast(data.error,true);return;}
-showToast('璇勮鎴愬姛锛?);
+showToast('评论成功！');
 document.getElementById('comment-input').value='';
 loadComments(number);
-// 鏇存柊璇︽儏椤佃瘎璁烘暟
+// 更新详情页评论数
 showDetail(number);
-}).catch(()=>showToast('缃戠粶閿欒',true));
+}).catch(()=>showToast('网络错误',true));
 }
 function addReaction(number,content){
-if(!userToken){showToast('璇峰厛鐧诲綍',true);return;}
+if(!userToken){showToast('请先登录',true);return;}
 fetch(API_BASE+'/api/reaction',{
 method:'POST',headers:{'Content-Type':'application/json'},
 body:JSON.stringify({token:userToken,number,content})
 }).then(r=>r.json()).then(data=>{
 if(data.error){showToast(data.error,true);return;}
-showToast('鎿嶄綔鎴愬姛锛?);
+showToast('操作成功！');
 showDetail(number);
-}).catch(()=>showToast('缃戠粶閿欒',true));
+}).catch(()=>showToast('网络错误',true));
 }
 
-// === 鍙戝笘 ===
+// === 发帖 ===
 function openPostModal(type){
-if(!userToken){showToast('璇峰厛鐧诲綍鍚庡彂甯?,true);openLoginModal();return;}
+if(!userToken){showToast('请先登录后发帖',true);openLoginModal();return;}
 currentModalType=type;
-const titles={discussion:'鍙戣捣璁ㄨ',bug:'鎻愪氦婕忔礊鎶ュ憡',library:'鎻愪氦绗笁鏂瑰簱'};
-document.getElementById('post-modal-title').textContent=titles[type]||'鍙戝笘';
+const titles={discussion:'发起讨论',bug:'提交漏洞报告',library:'提交第三方库'};
+document.getElementById('post-modal-title').textContent=titles[type]||'发帖';
 document.getElementById('lib-url-group').style.display=(type==='library')?'block':'none';
 document.getElementById('post-title').value='';
 document.getElementById('post-body').value='';
@@ -676,75 +680,75 @@ document.getElementById('post-modal').classList.add('active');
 function closePostModal(){document.getElementById('post-modal').classList.remove('active');}
 document.getElementById('post-modal').addEventListener('click',e=>{if(e.target.id==='post-modal')closePostModal();});
 document.getElementById('submit-post').addEventListener('click',()=>{
-if(!userToken){showToast('璇峰厛鐧诲綍',true);return;}
+if(!userToken){showToast('请先登录',true);return;}
 const title=document.getElementById('post-title').value.trim();
 const body=document.getElementById('post-body').value.trim();
-if(!title){showToast('璇疯緭鍏ユ爣棰?,true);return;}
-if(!body){showToast('璇疯緭鍏ュ唴瀹?,true);return;}
+if(!title){showToast('请输入标题',true);return;}
+if(!body){showToast('请输入内容',true);return;}
 let fullBody=body;
 if(currentModalType==='library'){
 const url=document.getElementById('lib-url').value.trim();
-if(url)fullBody+='\n\n**搴撻摼鎺?*: '+url;
+if(url)fullBody+='\n\n**库链接**: '+url;
 }
 const btn=document.getElementById('submit-post');
-btn.textContent='鎻愪氦涓?..';btn.disabled=true;
+btn.textContent='提交中...';btn.disabled=true;
 fetch(API_BASE+'/api/issues',{
 method:'POST',headers:{'Content-Type':'application/json'},
 body:JSON.stringify({token:userToken,title,body:fullBody,labels:[currentModalType]})
 }).then(r=>r.json()).then(data=>{
-btn.textContent='鎻愪氦';btn.disabled=false;
+btn.textContent='提交';btn.disabled=false;
 if(data.error){showToast(data.error,true);return;}
-showToast('鍙戝竷鎴愬姛锛?);
+showToast('发布成功！');
 closePostModal();
 if(currentModalType==='discussion')loadPosts('forum-posts','discussion');
 if(currentModalType==='bug')loadPosts('bug-posts','bug');
 if(currentModalType==='library')loadPosts('lib-posts','library');
-}).catch(e=>{btn.textContent='鎻愪氦';btn.disabled=false;showToast('缃戠粶閿欒',true);});
+}).catch(e=>{btn.textContent='提交';btn.disabled=false;showToast('网络错误',true);});
 });
 
-// === 缂栬緫甯栧瓙 ===
+// === 编辑帖子 ===
 function openEditModal(number){
-if(!userToken){showToast('璇峰厛鐧诲綍',true);return;}
+if(!userToken){showToast('请先登录',true);return;}
 fetch(API_BASE+'/api/issue?number='+number).then(r=>r.json()).then(post=>{
 if(post.error){showToast(post.error,true);return;}
-if(!currentUser||!post.user||currentUser.login!==post.user.login){showToast('鍙兘缂栬緫鑷繁鐨勫笘瀛?,true);return;}
+if(!currentUser||!post.user||currentUser.login!==post.user.login){showToast('只能编辑自己的帖子',true);return;}
 document.getElementById('edit-title').value=post.title||'';
 document.getElementById('edit-body').value=post.body||'';
 document.getElementById('edit-modal').classList.add('active');
 document.getElementById('submit-edit').onclick=()=>{
 const title=document.getElementById('edit-title').value.trim();
 const body=document.getElementById('edit-body').value.trim();
-if(!title||!body){showToast('鏍囬鍜屽唴瀹逛笉鑳戒负绌?,true);return;}
+if(!title||!body){showToast('标题和内容不能为空',true);return;}
 const btn=document.getElementById('submit-edit');
-btn.textContent='淇濆瓨涓?..';btn.disabled=true;
+btn.textContent='保存中...';btn.disabled=true;
 fetch(API_BASE+'/api/issues/edit',{
 method:'POST',headers:{'Content-Type':'application/json'},
 body:JSON.stringify({token:userToken,number,title,body})
 }).then(r=>r.json()).then(data=>{
-btn.textContent='淇濆瓨';btn.disabled=false;
+btn.textContent='保存';btn.disabled=false;
 if(data.error){showToast(data.error,true);return;}
-showToast('缂栬緫鎴愬姛锛?);
+showToast('编辑成功！');
 closeEditModal();
 showDetail(number);
-}).catch(()=>{btn.textContent='淇濆瓨';btn.disabled=false;showToast('缃戠粶閿欒',true);});
+}).catch(()=>{btn.textContent='保存';btn.disabled=false;showToast('网络错误',true);});
 };
-}).catch(()=>showToast('缃戠粶閿欒',true));
+}).catch(()=>showToast('网络错误',true));
 }
 function closeEditModal(){document.getElementById('edit-modal').classList.remove('active');}
 document.getElementById('edit-modal').addEventListener('click',e=>{if(e.target.id==='edit-modal')closeEditModal();});
 
-// === 鎼滅储 ===
+// === 搜索 ===
 function doSearch(){
 const q=document.getElementById('search-input').value.trim();
 if(!q)return;
 document.querySelectorAll('section').forEach(s=>s.classList.remove('active'));
 document.getElementById('search').classList.add('active');
 const results=document.getElementById('search-results');
-results.innerHTML='<div class="loading">鎼滅储涓?..</div>';
+results.innerHTML='<div class="loading">搜索中...</div>';
 fetch(API_BASE+'/api/search?q='+encodeURIComponent(q)).then(r=>r.json()).then(data=>{
 if(data.error){results.innerHTML='<div class="loading">'+escapeHtml(data.error)+'</div>';return;}
 const items=data.items||[];
-if(items.length===0){results.innerHTML='<div class="empty"><p>鏈壘鍒扮浉鍏冲笘瀛?/p></div>';return;}
+if(items.length===0){results.innerHTML='<div class="empty"><p>未找到相关帖子</p></div>';return;}
 let html='';
 for(const p of items){
 const date=timeAgo(p.created_at);
@@ -757,17 +761,17 @@ for(const l of labels){labelHtml+='<span class="tag tag-'+escapeHtml(l.name)+'">
 const num=p.number||0;
 html+=`<div class="card" onclick="showDetail(${num})">
 <h3>${escapeHtml(p.title)}</h3>
-<div class="meta">${avatar?'<img class="user-avatar" style="width:20px;height:20px" src="'+escapeHtml(avatar)+'">':''} <span>${escapeHtml(user)}</span> 路 <span>${date}</span> ${labelHtml}</div>
+<div class="meta">${avatar?'<img class="user-avatar" style="width:20px;height:20px" src="'+escapeHtml(avatar)+'">':''} <span>${escapeHtml(user)}</span> · <span>${date}</span> ${labelHtml}</div>
 <div class="body">${escapeHtml(p.body?p.body.substring(0,200):'')}</div>
-<div class="stats"><span>馃挰 ${comments}</span></div>
+<div class="stats"><span>💬 ${comments}</span></div>
 </div>`;
 }
 results.innerHTML=html;
-}).catch(()=>{results.innerHTML='<div class="loading">鎼滅储澶辫触</div>';});
+}).catch(()=>{results.innerHTML='<div class="loading">搜索失败</div>';});
 }
 
 
-// === 鍒濆鍖?===
+// === 初始化 ===
 updateUserUI();
 routeTo('home');
 </script>
