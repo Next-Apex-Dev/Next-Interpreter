@@ -1,4 +1,6 @@
-// Next 寮€鏀捐鍧?- Linux鐗堟湰锛堥浂渚濊禆锛岀敤libcurl+POSIX socket锛?// 瀹屾暣璁哄潧鍔熻兘锛氱敤鎴风櫥褰曘€佸笘瀛愯鎯呫€佽瘎璁恒€佺偣璧炪€佹悳绱€佸垎椤点€佹帓搴忋€佹爣绛?#include <stdio.h>
+// Next 开放论坛 - Linux版本（零依赖，用libcurl+POSIX socket）
+// 完整论坛功能：用户登录、帖子详情、评论、点赞、搜索、分页、排序、标签
+#include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include <unistd.h>
@@ -22,10 +24,12 @@ static const char* GITHUB_REPO = "Next-Apex-Dev/Next-Interpreter";
 static std::atomic<bool> g_running{true};
 static std::string g_ide_path;
 
-// objcopy宓屽叆鐨凬ext-IDE浜岃繘鍒舵暟鎹?extern "C" char _binary_Next_IDE_exe_start[];
+// objcopy嵌入的Next-IDE二进制数据
+extern "C" char _binary_Next_IDE_exe_start[];
 extern "C" char _binary_Next_IDE_exe_end[];
 
-// 閲婃斁鍐呭祵瑙ｉ噴鍣?std::string extract_ide() {
+// 释放内嵌解释器
+std::string extract_ide() {
     if (!g_ide_path.empty()) return g_ide_path;
     g_ide_path = "/tmp/NextForum_IDE";
     size_t size = _binary_Next_IDE_exe_end - _binary_Next_IDE_exe_start;
@@ -36,7 +40,7 @@ extern "C" char _binary_Next_IDE_exe_end[];
     return g_ide_path;
 }
 
-// URL瑙ｇ爜
+// URL解码
 std::string url_decode(const std::string& s) {
     std::string r;
     for (size_t i = 0; i < s.size(); ++i) {
@@ -51,7 +55,7 @@ std::string url_decode(const std::string& s) {
     return r;
 }
 
-// URL缂栫爜
+// URL编码
 std::string url_encode(const std::string& s) {
     std::string r;
     for (unsigned char c : s) {
@@ -71,7 +75,7 @@ std::string get_param(const std::string& query, const std::string& key) {
     return url_decode(query.substr(pos, end - pos));
 }
 
-// JSON杞箟
+// JSON转义
 std::string json_escape(const std::string& s) {
     std::string r;
     for (char c : s) {
@@ -116,17 +120,18 @@ std::string json_extract(const std::string& json, const std::string& key) {
     return r;
 }
 
-// libcurl鍥炶皟
+// libcurl回调
 static size_t curl_write_cb(void* data, size_t size, size_t nmemb, void* userp) {
     ((std::string*)userp)->append((char*)data, size * nmemb);
     return size * nmemb;
 }
 
-// HTTPS璇锋眰锛坙ibcurl锛屾敮鎸丟ET/POST/PATCH/DELETE锛?std::string https_request(const std::string& method, const std::string& path,
+// HTTPS请求（libcurl，支持GET/POST/PATCH/DELETE）
+std::string https_request(const std::string& method, const std::string& path,
                           const std::string& body, const std::string& token) {
     std::string url = "https://api.github.com" + path;
     CURL* curl = curl_easy_init();
-    if (!curl) return "{\"error\":\"curl鍒濆鍖栧け璐"}";
+    if (!curl) return "{\"error\":\"curl初始化失败\"}";
 
     std::string response;
     struct curl_slist* headers = nullptr;
@@ -161,13 +166,13 @@ static size_t curl_write_cb(void* data, size_t size, size_t nmemb, void* userp) 
     curl_slist_free_all(headers);
     curl_easy_cleanup(curl);
 
-    if (res != CURLE_OK) return "{\"error\":\"缃戠粶璇锋眰澶辫触\"}";
+    if (res != CURLE_OK) return "{\"error\":\"网络请求失败\"}";
     if (httpCode != 200 && httpCode != 201)
         return "{\"error\":\"HTTP " + std::to_string(httpCode) + "\",\"detail\":\"" + json_escape(response.substr(0, 500)) + "\"}";
     return response;
 }
 
-// === GitHub API 灏佽 ===
+// === GitHub API 封装 ===
 
 std::string github_get_issues(const std::string& labels, const std::string& sort,
                               int page, int per_page, const std::string& state) {
@@ -264,11 +269,11 @@ std::string github_edit_issue(const std::string& token, int number,
     return https_request("PATCH", path, json_body, token);
 }
 
-// 鎵цNext浠ｇ爜
+// 执行Next代码
 std::string run_next_code(const std::string& code) {
     char nextFile[] = "/tmp/nextforum_code_XXXXXX";
     int fd = mkstemp(nextFile);
-    if (fd < 0) return "{\"error\":\"鏃犳硶鍒涘缓涓存椂鏂囦欢\"}";
+    if (fd < 0) return "{\"error\":\"无法创建临时文件\"}";
     write(fd, code.c_str(), code.size());
     close(fd);
 
@@ -294,7 +299,7 @@ std::string run_next_code(const std::string& code) {
     return "{\"output\":\"" + json_escape(output) + "\"}";
 }
 
-// HTTP鍝嶅簲
+// HTTP响应
 void http_send(int sock, int status, const std::string& content_type,
                const std::string& body) {
     std::string status_text = (status == 200) ? "OK" :
@@ -311,7 +316,7 @@ void http_send(int sock, int status, const std::string& content_type,
     send(sock, r.c_str(), r.size(), 0);
 }
 
-// 浠嶫SON body涓彁鍙杔abels鏁扮粍
+// 从JSON body中提取labels数组
 std::string extract_labels_from_body(const std::string& body) {
     std::string labels;
     size_t lp = body.find("\"labels\":");
@@ -333,7 +338,7 @@ std::string extract_labels_from_body(const std::string& body) {
     return labels;
 }
 
-// 澶勭悊HTTP璇锋眰
+// 处理HTTP请求
 void handle_request(int sock, const std::string& request) {
     size_t pos = request.find("\r\n");
     std::string first_line = request.substr(0, pos);
@@ -350,7 +355,7 @@ void handle_request(int sock, const std::string& request) {
         http_send(sock, 200, "text/html; charset=utf-8", FORUM_HTML); return;
     }
 
-    // Issues鍒楄〃
+    // Issues列表
     if (path.find("/api/issues") == 0 && method == "GET") {
         size_t q = path.find('?');
         std::string query = (q != std::string::npos) ? path.substr(q + 1) : "";
@@ -367,7 +372,7 @@ void handle_request(int sock, const std::string& request) {
         return;
     }
 
-    // 鎼滅储
+    // 搜索
     if (path.find("/api/search") == 0 && method == "GET") {
         size_t q = path.find('?');
         std::string query = (q != std::string::npos) ? path.substr(q + 1) : "";
@@ -375,47 +380,47 @@ void handle_request(int sock, const std::string& request) {
         std::string label = get_param(query, "label");
         std::string page_str = get_param(query, "page");
         int page = page_str.empty() ? 1 : atoi(page_str.c_str());
-        if (q_val.empty()) { http_send(sock, 200, "application/json", "{\"error\":\"缂哄皯鎼滅储鍏抽敭璇峔"}"); return; }
+        if (q_val.empty()) { http_send(sock, 200, "application/json", "{\"error\":\"缺少搜索关键词\"}"); return; }
         http_send(sock, 200, "application/json; charset=utf-8", github_search_issues(q_val, label, page));
         return;
     }
 
-    // 鍒涘缓Issue
+    // 创建Issue
     if (path == "/api/issues" && method == "POST") {
         std::string token = json_extract(body, "token");
         std::string title = json_extract(body, "title");
         std::string post_body = json_extract(body, "body");
         std::string labels = extract_labels_from_body(body);
         if (labels.empty()) labels = "discussion";
-        if (token.empty()) { http_send(sock, 200, "application/json", "{\"error\":\"缂哄皯 GitHub Token\"}"); return; }
+        if (token.empty()) { http_send(sock, 200, "application/json", "{\"error\":\"缺少 GitHub Token\"}"); return; }
         http_send(sock, 200, "application/json; charset=utf-8", github_create_issue(token, title, post_body, labels));
         return;
     }
 
-    // 缂栬緫Issue
+    // 编辑Issue
     if (path == "/api/issues/edit" && method == "POST") {
         std::string token = json_extract(body, "token");
         std::string number_str = json_extract(body, "number");
         std::string title = json_extract(body, "title");
         std::string post_body = json_extract(body, "body");
-        if (token.empty()) { http_send(sock, 200, "application/json", "{\"error\":\"缂哄皯 Token\"}"); return; }
+        if (token.empty()) { http_send(sock, 200, "application/json", "{\"error\":\"缺少 Token\"}"); return; }
         int number = atoi(number_str.c_str());
-        if (number <= 0) { http_send(sock, 200, "application/json", "{\"error\":\"鏃犳晥鐨勫笘瀛愮紪鍙穃"}"); return; }
+        if (number <= 0) { http_send(sock, 200, "application/json", "{\"error\":\"无效的帖子编号\"}"); return; }
         http_send(sock, 200, "application/json; charset=utf-8", github_edit_issue(token, number, title, post_body));
         return;
     }
 
-    // 鑾峰彇鍗曚釜Issue
+    // 获取单个Issue
     if (path.find("/api/issue") == 0 && method == "GET") {
         size_t q = path.find('?');
         std::string query = (q != std::string::npos) ? path.substr(q + 1) : "";
         int number = atoi(get_param(query, "number").c_str());
-        if (number <= 0) { http_send(sock, 200, "application/json", "{\"error\":\"鏃犳晥鐨勫笘瀛愮紪鍙穃"}"); return; }
+        if (number <= 0) { http_send(sock, 200, "application/json", "{\"error\":\"无效的帖子编号\"}"); return; }
         http_send(sock, 200, "application/json; charset=utf-8", github_get_issue(number));
         return;
     }
 
-    // 鑾峰彇璇勮
+    // 获取评论
     if (path.find("/api/comments") == 0 && method == "GET") {
         size_t q = path.find('?');
         std::string query = (q != std::string::npos) ? path.substr(q + 1) : "";
@@ -427,43 +432,43 @@ void handle_request(int sock, const std::string& request) {
         return;
     }
 
-    // 鍙戣〃璇勮
+    // 发表评论
     if (path == "/api/comment" && method == "POST") {
         std::string token = json_extract(body, "token");
         std::string number_str = json_extract(body, "number");
         std::string comment_body = json_extract(body, "body");
-        if (token.empty()) { http_send(sock, 200, "application/json", "{\"error\":\"缂哄皯 Token\"}"); return; }
+        if (token.empty()) { http_send(sock, 200, "application/json", "{\"error\":\"缺少 Token\"}"); return; }
         int number = atoi(number_str.c_str());
-        if (number <= 0) { http_send(sock, 200, "application/json", "{\"error\":\"鏃犳晥鐨勫笘瀛愮紪鍙穃"}"); return; }
-        if (comment_body.empty()) { http_send(sock, 200, "application/json", "{\"error\":\"璇勮鍐呭涓嶈兘涓虹┖\"}"); return; }
+        if (number <= 0) { http_send(sock, 200, "application/json", "{\"error\":\"无效的帖子编号\"}"); return; }
+        if (comment_body.empty()) { http_send(sock, 200, "application/json", "{\"error\":\"评论内容不能为空\"}"); return; }
         http_send(sock, 200, "application/json; charset=utf-8", github_create_comment(token, number, comment_body));
         return;
     }
 
-    // 娣诲姞鍙嶅簲
+    // 添加反应
     if (path == "/api/reaction" && method == "POST") {
         std::string token = json_extract(body, "token");
         std::string number_str = json_extract(body, "number");
         std::string content = json_extract(body, "content");
-        if (token.empty()) { http_send(sock, 200, "application/json", "{\"error\":\"缂哄皯 Token\"}"); return; }
+        if (token.empty()) { http_send(sock, 200, "application/json", "{\"error\":\"缺少 Token\"}"); return; }
         if (content.empty()) content = "+1";
         int number = atoi(number_str.c_str());
-        if (number <= 0) { http_send(sock, 200, "application/json", "{\"error\":\"鏃犳晥鐨勫笘瀛愮紪鍙穃"}"); return; }
+        if (number <= 0) { http_send(sock, 200, "application/json", "{\"error\":\"无效的帖子编号\"}"); return; }
         http_send(sock, 200, "application/json; charset=utf-8", github_add_reaction(token, number, content));
         return;
     }
 
-    // 鑾峰彇鐢ㄦ埛淇℃伅
+    // 获取用户信息
     if (path.find("/api/user") == 0 && method == "GET") {
         size_t q = path.find('?');
         std::string query = (q != std::string::npos) ? path.substr(q + 1) : "";
         std::string token = get_param(query, "token");
-        if (token.empty()) { http_send(sock, 200, "application/json", "{\"error\":\"缂哄皯 Token\"}"); return; }
+        if (token.empty()) { http_send(sock, 200, "application/json", "{\"error\":\"缺少 Token\"}"); return; }
         http_send(sock, 200, "application/json; charset=utf-8", github_get_user(token));
         return;
     }
 
-    // 鑾峰彇鏍囩
+    // 获取标签
     if (path == "/api/labels" && method == "GET") {
         std::string result = github_get_labels();
         if (result.empty()) result = "[]";
@@ -471,13 +476,13 @@ void handle_request(int sock, const std::string& request) {
         return;
     }
 
-    // 鑾峰彇缁熻
+    // 获取统计
     if (path == "/api/stats" && method == "GET") {
         http_send(sock, 200, "application/json; charset=utf-8", github_get_stats());
         return;
     }
 
-    // 鎵цNext浠ｇ爜
+    // 执行Next代码
     if (path == "/api/run" && method == "POST") {
         http_send(sock, 200, "application/json; charset=utf-8", run_next_code(json_extract(body, "code")));
         return;
@@ -486,7 +491,8 @@ void handle_request(int sock, const std::string& request) {
     http_send(sock, 404, "text/plain", "404 Not Found");
 }
 
-// HTTP鏈嶅姟鍣ㄧ嚎绋?void* http_server_thread(void*) {
+// HTTP服务器线程
+void* http_server_thread(void*) {
     int server = socket(AF_INET, SOCK_STREAM, 0);
     if (server < 0) return nullptr;
 
@@ -562,9 +568,9 @@ int main() {
     pid_t pid = fork();
     if (pid == 0) { execlp("xdg-open", "xdg-open", url.c_str(), nullptr); _exit(0); }
 
-    printf("Next 寮€鏀捐鍧涙湇鍔℃鍦ㄨ繍琛?..\n");
-    printf("娴忚鍣ㄥ凡鑷姩鎵撳紑: %s\n", url.c_str());
-    printf("鎸?Enter 閿仠姝㈡湇鍔″苟閫€鍑?..\n");
+    printf("Next 开放论坛服务正在运行...\n");
+    printf("浏览器已自动打开: %s\n", url.c_str());
+    printf("按 Enter 键停止服务并退出...\n");
     getchar();
 
     g_running = false;
