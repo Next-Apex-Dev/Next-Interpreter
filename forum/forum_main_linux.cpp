@@ -11,6 +11,7 @@
 #include <pthread.h>
 #include <curl/curl.h>
 #include <sys/wait.h>
+#include <sys/stat.h>
 #include <fstream>
 #include <sstream>
 #include <string>
