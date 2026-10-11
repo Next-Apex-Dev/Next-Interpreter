@@ -1,6 +1,6 @@
-# Next1.1 编程语言解释器
+# Next1.2 编程语言解释器
 
-Next1.1 是一门支持函数式、面向对象、元编程、协程、GUI 等特性的脚本语言，由 C++20 实现。
+Next1.2 是一门支持函数式、面向对象、元编程、协程、GUI 等特性的脚本语言，由 C++20 实现。
 
 ## 功能特性
 
@@ -32,7 +32,7 @@ cmake ..
 cmake --build . --config Release
 ```
 
-编译后生成 `next11.exe`（Windows）或 `next11`（Linux/macOS）。
+编译后生成 `next.exe`（Windows）或 `next`（Linux/macOS）。
 
 ### 方法二：直接用 g++ 编译
 
@@ -51,7 +51,7 @@ g++ -std=c++20 -fcoroutines -O2 -static -Isrc -Wl,--stack,0x400000 \
 
 ```bash
 # 运行脚本文件
-next11 hello.next
+next hello.next
 
 # 启动 REPL
 next11
@@ -61,9 +61,9 @@ next11
 
 ```bash
 # 运行全部测试
-next11 tests/hello.next
-next11 tests/func.next
-next11 tests/struct_enum.next
+next tests/hello.next
+next tests/func.next
+next tests/struct_enum.next
 # ... 共 36 个测试
 ```
 
