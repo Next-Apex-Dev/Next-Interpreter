@@ -1,0 +1,40 @@
+// 边界测试：嵌套调用、管道链、数组、match guard、元组解构、字符串拼接
+fn add(a: int, b: int) -> int { return a + b; }
+fn double(x: int) -> int { return x * 2; }
+fn is_even(n: int) -> bool { return n % 2 == 0; }
+
+fn main() -> void {
+  print(add(double(3), 4));
+  let r: int = 5 |> double |> double;
+  print(r);
+
+  let arr: int[] = [10, 20, 30, 40, 50];
+  print(arr[0]);
+  print(arr[4]);
+  print(len(arr));
+
+  let x: int = 7;
+  let desc: string = match x {
+    0 => "zero",
+    n if is_even(n) => "even",
+    _ => "odd",
+  };
+  print(desc);
+
+  let s: string = "foo" + "bar" + "baz";
+  print(s);
+
+  let sum: int = 0;
+  for v in arr {
+    sum = sum + v;
+  }
+  print(sum);
+
+  let i: int = 0;
+  let acc: int = 0;
+  while i < 5 {
+    acc = acc + i;
+    i = i + 1;
+  }
+  print(acc);
+}

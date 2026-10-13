@@ -1,0 +1,87 @@
+fn fibonacci(n: int) -> int {
+    if (n <= 1) { return n; }
+    return fibonacci(n - 1) + fibonacci(n - 2);
+}
+
+fn factorial(n: int) -> int {
+    if (n <= 1) { return 1; }
+    return n * factorial(n - 1);
+}
+
+fn bubble_sort(arr: int[]) -> int[] {
+    let n: int = len(arr);
+    let i: int = 0;
+    while (i < n - 1) {
+        let j: int = 0;
+        while (j < n - i - 1) {
+            if (arr[j] > arr[j + 1]) {
+                let tmp: int = arr[j];
+                arr[j] = arr[j + 1];
+                arr[j + 1] = tmp;
+            }
+            j = j + 1;
+        }
+        i = i + 1;
+    }
+    return arr;
+}
+
+fn quick_sort(arr: int[]) -> int[] {
+    if (len(arr) <= 1) { return arr; }
+    let pivot: int = arr[0];
+    let less: int[] = [];
+    let greater: int[] = [];
+    let i: int = 1;
+    while (i < len(arr)) {
+        if (arr[i] <= pivot) {
+            less = less + [arr[i]];
+        } else {
+            greater = greater + [arr[i]];
+        }
+        i = i + 1;
+    }
+    return quick_sort(less) + [pivot] + quick_sort(greater);
+}
+
+fn main() -> void {
+    let start: int = time_now_ms();
+
+    let f: int = fibonacci(20);
+    print("[1] Fibonacci(20) = " + str(f) + " (期望 6765)");
+
+    let fac: int = factorial(12);
+    print("[2] 阶乘 12! = " + str(fac) + " (期望 479001600)");
+
+    let arr1: int[] = [5, 2, 8, 1, 9, 3, 7, 4, 6];
+    let sorted1: int[] = bubble_sort(arr1);
+    print("[3] 冒泡排序 = " + str(sorted1[0]) + "," + str(sorted1[8]));
+
+    let arr2: int[] = [9, 7, 5, 3, 1, 8, 6, 4, 2];
+    let sorted2: int[] = quick_sort(arr2);
+    print("[4] 快速排序 = " + str(sorted2[0]) + "," + str(sorted2[8]));
+
+    let sum: int = 0;
+    let k: int = 1;
+    while (k <= 100) {
+        sum = sum + k;
+        k = k + 1;
+    }
+    print("[6] for累加 1..100 = " + str(sum) + " (期望 5050)");
+
+    let d: dict = {"a": 1, "b": 2};
+    d["c"] = 3;
+    let dv: int = d["c"];
+    del d["b"];
+    print("[7] 字典增删查 = " + str(dv) + ", len=" + str(len(d)));
+
+    let s: string = "";
+    let m: int = 0;
+    while (m < 10) {
+        s = s + "x";
+        m = m + 1;
+    }
+    print("[8] 字符串拼接 len = " + str(len(s)) + " (期望 10)");
+
+    let end: int = time_now_ms();
+    print("[13] 启动+执行耗时 = " + str(end - start) + " ms");
+}

@@ -1,0 +1,70 @@
+fn fibonacci(n: int) -> int {
+    if (n <= 1) { return n; }
+    return fibonacci(n - 1) + fibonacci(n - 2);
+}
+fn factorial(n: int) -> int {
+    if (n <= 1) { return 1; }
+    return n * factorial(n - 1);
+}
+fn bubble_sort(arr: int[]) -> int[] {
+    let n: int = len(arr);
+    let i: int = 0;
+    while (i < n - 1) {
+        let j: int = 0;
+        while (j < n - i - 1) {
+            if (arr[j] > arr[j + 1]) {
+                let tmp: int = arr[j];
+                arr[j] = arr[j + 1];
+                arr[j + 1] = tmp;
+            }
+            j = j + 1;
+        }
+        i = i + 1;
+    }
+    return arr;
+}
+fn quick_sort(arr: int[]) -> int[] {
+    if (len(arr) <= 1) { return arr; }
+    let pivot: int = arr[0];
+    let less: int[] = [];
+    let greater: int[] = [];
+    let i: int = 1;
+    while (i < len(arr)) {
+        if (arr[i] <= pivot) { less = less + [arr[i]]; } else { greater = greater + [arr[i]]; }
+        i = i + 1;
+    }
+    return quick_sort(less) + [pivot] + quick_sort(greater);
+}
+fn arr_str(arr: int[]) -> string {
+    let s: string = "[";
+    let i: int = 0;
+    while (i < len(arr)) {
+        if (i > 0) { s = s + ","; }
+        s = s + str(arr[i]);
+        i = i + 1;
+    }
+    return s + "]";
+}
+fn main() -> void {
+    print("[1] Fibonacci 数列: f(0)=" + str(fibonacci(0)) + ",f(1)=" + str(fibonacci(1)) + ",f(10)=" + str(fibonacci(10)) + ",f(15)=" + str(fibonacci(15)) + ",f(20)=" + str(fibonacci(20)));
+    print("[2] 阶乘: 5!=" + str(factorial(5)) + ",8!=" + str(factorial(8)) + ",10!=" + str(factorial(10)) + ",12!=" + str(factorial(12)));
+    let a: int[] = [5,2,8,1,9,3,7,4,6,0];
+    print("[3] 冒泡排序: " + arr_str(a) + " -> " + arr_str(bubble_sort(a)));
+    let b: int[] = [9,7,5,3,1,8,6,4,2,0];
+    print("[4] 快速排序: " + arr_str(b) + " -> " + arr_str(quick_sort(b)));
+    let sum: int = 0;
+    let k: int = 1;
+    while (k <= 100) { sum = sum + k; k = k + 1; }
+    print("[6] for累加: sum(1..100)=" + str(sum));
+    let d: dict = {"a": 1, "b": 2, "c": 3};
+    print("[7] 字典初始: " + str(len(d)) + " 项");
+    d["d"] = 4;
+    print("[7] 增加 d=4 后: " + str(len(d)) + " 项, d[d]=" + str(d["d"]));
+    del d["b"];
+    print("[7] 删除 b 后: " + str(len(d)) + " 项");
+    print("[7] 查询 a=" + str(d["a"]) + ",c=" + str(d["c"]) + ",d=" + str(d["d"]));
+    let s: string = "";
+    let m: int = 0;
+    while (m < 1000) { s = s + "x"; m = m + 1; }
+    print("[8] 字符串拼接: 1000次 -> len=" + str(len(s)));
+}

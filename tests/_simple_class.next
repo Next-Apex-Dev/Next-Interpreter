@@ -1,0 +1,15 @@
+class Simple {
+    let name: string;
+    fn __init__(self: Simple, n: string) -> void {
+        self.name = n;
+        print("inside: self.name=" + self.name);
+    }
+    fn get_name(self: Simple) -> string {
+        return self.name;
+    }
+}
+fn main() -> void {
+    let s: Simple = Simple("Hello");
+    print("outside: s.name=" + s.name);
+    print("method: " + s.get_name());
+}

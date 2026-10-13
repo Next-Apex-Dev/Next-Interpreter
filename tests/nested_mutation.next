@@ -1,0 +1,75 @@
+struct Point {
+    x: int;
+    y: int;
+}
+
+fn main() -> void {
+    let failures: int = 0;
+
+    let points: any = [Point{x: 1, y: 2}, Point{x: 3, y: 4}];
+    points[0].x = 99;
+    if points[0].x == 99 {
+        print("PASS: nested struct field via array index");
+    } else {
+        print("FAIL: nested struct field via array index");
+        failures = failures + 1;
+    }
+
+    let arr: any = [[1, 2], [3, 4]];
+    arr[0][1] = 99;
+    if arr[0][1] == 99 {
+        print("PASS: nested array element");
+    } else {
+        print("FAIL: nested array element");
+        failures = failures + 1;
+    }
+
+    let outer: dict = dict();
+    let inner: dict = dict();
+    dict_set(inner, "key", "hello");
+    dict_set(outer, "nested", inner);
+    let retrieved: any = dict_get(outer, "nested");
+    dict_set(retrieved, "key", "world");
+    let final_val: string = dict_get(dict_get(outer, "nested"), "key");
+    if final_val == "world" {
+        print("PASS: nested dict via dict_get/dict_set");
+    } else {
+        print("FAIL: nested dict via dict_get/dict_set");
+        failures = failures + 1;
+    }
+
+    let p: Point = Point{x: 10, y: 20};
+    p.x = 100;
+    if p.x == 100 {
+        print("PASS: direct struct field assignment");
+    } else {
+        print("FAIL: direct struct field assignment");
+        failures = failures + 1;
+    }
+
+    let arr2: int[] = [1, 2, 3];
+    push(arr2, 4);
+    push(arr2, 5);
+    if len(arr2) == 5 && arr2[3] == 4 && arr2[4] == 5 {
+        print("PASS: push then read");
+    } else {
+        print("FAIL: push then read");
+        failures = failures + 1;
+    }
+
+    let arr3: int[] = [1, 2, 3];
+    let arr4: any = arr3;
+    push(arr4, 99);
+    if len(arr3) == 4 && arr3[3] == 99 {
+        print("PASS: alias array modification");
+    } else {
+        print("FAIL: alias array modification");
+        failures = failures + 1;
+    }
+
+    if failures == 0 {
+        print("ALL PASS: nested modification");
+    } else {
+        print("FAILED: " + str(failures) + " tests");
+    }
+}

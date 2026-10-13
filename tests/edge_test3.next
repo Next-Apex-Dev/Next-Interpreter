@@ -1,0 +1,60 @@
+// 测试3：枚举完整匹配、类型别名、嵌套match、break/continue、元组返回
+enum Color { Red, Green, Blue }
+
+type IntPair = (int, int);
+
+fn make_pair(a: int, b: int) -> (int, int) {
+  return (a, b);
+}
+
+fn swap(p: (int, int)) -> (int, int) {
+  let (a, b) = p;
+  return (b, a);
+}
+
+fn main() -> void {
+  // 枚举匹配
+  let c: Color = Red;
+  let s: string = match c {
+    Red => "red",
+    Green => "green",
+    Blue => "blue",
+  };
+  print(s);
+
+  // 元组返回和解构
+  let p: (int, int) = make_pair(3, 7);
+  let (x, y) = p;
+  print(x);
+  print(y);
+
+  // swap
+  let sp: (int, int) = swap(p);
+  let (sx, sy) = sp;
+  print(sx);
+  print(sy);
+
+  // break
+  let arr: int[] = [1, 2, 3, 4, 5];
+  for v in arr {
+    if v == 3 { break; }
+    print(v);
+  }
+
+  // continue
+  for v in arr {
+    if v == 3 { continue; }
+    print(v);
+  }
+
+  // 嵌套 match
+  let n: int = 5;
+  let result: string = match n {
+    0 => "zero",
+    _ => match n {
+      1 => "one",
+      _ => "many",
+    },
+  };
+  print(result);
+}

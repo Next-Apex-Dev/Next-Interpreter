@@ -1,0 +1,6 @@
+// tests/modules/pkg/__init__.next - 包初始化文件
+let pkg_name: string = "test_pkg";
+
+fn pkg_fn() -> string {
+    return "pkg_fn_called";
+}

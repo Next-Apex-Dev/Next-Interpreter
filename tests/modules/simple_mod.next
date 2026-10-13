@@ -1,0 +1,10 @@
+// 简单模块测试
+let value: int = 42;
+
+fn get_value() -> int {
+    return value;
+}
+
+fn add(a: int, b: int) -> int {
+    return a + b;
+}

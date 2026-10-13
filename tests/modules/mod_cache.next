@@ -1,0 +1,7 @@
+// tests/modules/mod_cache.next - 用于测试模块缓存
+let cache_val: int = 0;
+
+fn inc() -> int {
+    cache_val = cache_val + 1;
+    return cache_val;
+}

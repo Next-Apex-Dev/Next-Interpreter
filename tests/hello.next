@@ -1,0 +1,8 @@
+// next
+fn main() -> void {
+    print("Hello, Next!");
+    let x: int = 42;
+    print(x);
+    let y: int = x + 8 * 2;
+    print(y);
+}

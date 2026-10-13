@@ -1,0 +1,11 @@
+// 生成器简化测试
+fn simple_gen() -> int {
+    yield 1;
+    return 2;
+}
+
+fn main() -> void {
+    let gen: int = simple_gen();
+    let v1: int = next(gen);
+    print(v1);
+}

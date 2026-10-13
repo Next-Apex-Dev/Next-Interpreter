@@ -1,0 +1,149 @@
+// Next 全面验证：BUG 18-23 修复 + 8个新功能
+struct Wrapper {
+    name: string;
+    val: int;
+}
+
+fn main() -> void {
+    let failures: int = 0;
+
+    // ========== BUG 18: 字典解包key覆盖语义 ==========
+    let d1: dict = {"a": 1, "b": 2};
+    let d2: dict = {**d1, "b": 99};
+    if (d2["b"]) == 99 {
+        print("PASS BUG18: dict unpack override");
+    } else {
+        print("FAIL BUG18: got " + str(d2["b"]));
+        failures = failures + 1;
+    }
+
+    // ========== BUG 22: 负数范围模式 ==========
+    fn classify_neg(n: int) -> string {
+        return match n {
+            -10..-1 => "negative",
+            0 => "zero",
+            1..10 => "positive",
+            _ => "other",
+        };
+    }
+    if classify_neg(-5) == "negative" {
+        print("PASS BUG22: negative range match");
+    } else {
+        print("FAIL BUG22: got " + classify_neg(-5));
+        failures = failures + 1;
+    }
+
+    // ========== BUG 23: or模式中的范围 ==========
+    fn classify_or_range(n: int) -> string {
+        return match n {
+            1..10 | 90..100 => "special",
+            _ => "normal",
+        };
+    }
+    if classify_or_range(5) == "special" {
+        print("PASS BUG23a: or range match (first)");
+    } else {
+        print("FAIL BUG23a: got " + classify_or_range(5));
+        failures = failures + 1;
+    }
+    if classify_or_range(95) == "special" {
+        print("PASS BUG23b: or range match (second)");
+    } else {
+        print("FAIL BUG23b: got " + classify_or_range(95));
+        failures = failures + 1;
+    }
+    if classify_or_range(50) == "normal" {
+        print("PASS BUG23c: or range match (fallback)");
+    } else {
+        print("FAIL BUG23c: got " + classify_or_range(50));
+        failures = failures + 1;
+    }
+
+    // ========== 新功能1: 字符串插值 ==========
+    let name: string = "World";
+    let greeting: string = f"Hello, {name}!";
+    if greeting == "Hello, World!" {
+        print("PASS F1: string interpolation");
+    } else {
+        print("FAIL F1: got " + greeting);
+        failures = failures + 1;
+    }
+
+    // ========== 新功能2: OptionalChain ==========
+    let obj: Wrapper = Wrapper { name: "ok", val: 42 };
+    let val: int = obj?.val;
+    if val == 42 {
+        print("PASS F2: optional chain access");
+    } else {
+        print("FAIL F2: got " + str(val));
+        failures = failures + 1;
+    }
+
+    // ========== 新功能3: match or模式 ==========
+    fn check_or(n: int) -> string {
+        return match n {
+            1 | 2 | 3 => "small",
+            _ => "big",
+        };
+    }
+    if check_or(2) == "small" {
+        print("PASS F3: match or pattern");
+    } else {
+        print("FAIL F3: got " + check_or(2));
+        failures = failures + 1;
+    }
+
+    // ========== 新功能6: null字面量 ==========
+    let x: any = null;
+    if x == null {
+        print("PASS F6: null literal");
+    } else {
+        print("FAIL F6: null not equal");
+        failures = failures + 1;
+    }
+
+    // ========== 新功能7: 三目运算符 ==========
+    let cond: bool = true;
+    let result: int = cond ? 100 : 200;
+    if result == 100 {
+        print("PASS F7: ternary operator");
+    } else {
+        print("FAIL F7: got " + str(result));
+        failures = failures + 1;
+    }
+
+    // ========== 新功能5: Spread操作符 ==========
+    let arr1: int[] = [1, 2, 3];
+    let arr2: int[] = [0, ...arr1, 4];
+    if len(arr2) == 5 && arr2[0] == 0 && arr2[4] == 4 {
+        print("PASS F5: array spread");
+    } else {
+        print("FAIL F5: len=" + str(len(arr2)));
+        failures = failures + 1;
+    }
+
+    // ========== 新功能8: 范围模式匹配 ==========
+    fn grade(score: int) -> string {
+        return match score {
+            90..100 => "A",
+            80..89 => "B",
+            60..79 => "C",
+            0..59 => "F",
+            _ => "invalid",
+        };
+    }
+    if grade(95) == "A" && grade(85) == "B" && grade(70) == "C" && grade(30) == "F" {
+        print("PASS F8: range pattern match");
+    } else {
+        print("FAIL F8: " + grade(95) + "/" + grade(85) + "/" + grade(70) + "/" + grade(30));
+        failures = failures + 1;
+    }
+
+    // ========== 总结 ==========
+    print("");
+    if failures == 0 {
+        print("=== ALL Next FEATURES & BUG FIXES VERIFIED ===");
+    } else {
+        print("=== FAILED: " + str(failures) + " tests ===");
+    }
+}

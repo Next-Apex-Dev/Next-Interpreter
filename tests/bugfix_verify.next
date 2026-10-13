@@ -1,0 +1,78 @@
+fn main() -> void {
+    let failures: int = 0;
+
+    let c1: complex = 3+4i;
+    let c2: complex = 3-4i;
+    let c3: complex = 3.5i;
+
+    print("c1 = " + str(c1));
+    print("c2 = " + str(c2));
+    print("c3 = " + str(c3));
+
+    if str(c1) == "3+4j" {
+        print("PASS: 3+4i parsed correctly");
+    } else {
+        print("FAIL: 3+4i got " + str(c1));
+        failures = failures + 1;
+    }
+
+    if str(c2) == "3-4j" {
+        print("PASS: 3-4i parsed correctly");
+    } else {
+        print("FAIL: 3-4i got " + str(c2));
+        failures = failures + 1;
+    }
+
+    if str(c3) == "0+3.5j" || str(c3) == "3.5j" {
+        print("PASS: 3.5i parsed correctly");
+    } else {
+        print("FAIL: 3.5i got " + str(c3));
+        failures = failures + 1;
+    }
+
+    let n: int = 0;
+    if n {
+        print("FAIL: 0 should be falsy");
+        failures = failures + 1;
+    } else {
+        print("PASS: 0 is falsy");
+    }
+
+    let empty_arr: int[] = [];
+    if empty_arr {
+        print("FAIL: empty array should be falsy");
+        failures = failures + 1;
+    } else {
+        print("PASS: empty array is falsy");
+    }
+
+    let empty_d: dict = dict();
+    if empty_d {
+        print("FAIL: empty dict should be falsy");
+        failures = failures + 1;
+    } else {
+        print("PASS: empty dict is falsy");
+    }
+
+    let empty_s: set = set();
+    if empty_s {
+        print("FAIL: empty set should be falsy");
+        failures = failures + 1;
+    } else {
+        print("PASS: empty set is falsy");
+    }
+
+    let s1: string = "hello\nworld";
+    if len(s1) == 11 {
+        print("PASS: \\n escape works");
+    } else {
+        print("FAIL: \\n escape got len=" + str(len(s1)));
+        failures = failures + 1;
+    }
+
+    if failures == 0 {
+        print("ALL PASS: bug fixes verified");
+    } else {
+        print("FAILED: " + str(failures) + " tests");
+    }
+}

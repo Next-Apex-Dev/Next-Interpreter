@@ -1,0 +1,27 @@
+fn task_a() -> int {
+    yield 1;
+    yield 2;
+    yield 3;
+    return 6;
+}
+fn task_b() -> int {
+    yield 10;
+    yield 20;
+    return 30;
+}
+fn task_c() -> int {
+    yield 100;
+    return 100;
+}
+fn main() -> void {
+    let a: int = task_a();
+    let b: int = task_b();
+    let c: int = task_c();
+    let va: int = next(a);
+    let vb: int = next(b);
+    let vc: int = next(c);
+    let va2: int = next(a);
+    let vb2: int = next(b);
+    let va3: int = next(a);
+    print("[16] 协程轮转调度: a=" + str(va) + "," + str(va2) + "," + str(va3) + " b=" + str(vb) + "," + str(vb2) + " c=" + str(vc));
+}

@@ -1,0 +1,93 @@
+// 测试4：深递归、大数组、浮点精度、字符串操作、变量遮蔽
+fn fib(n: int) -> int {
+  if n <= 1 { return n; }
+  return fib(n - 1) + fib(n - 2);
+}
+
+fn sum_arr(arr: int[]) -> int {
+  let total: int = 0;
+  for v in arr {
+    total = total + v;
+  }
+  return total;
+}
+
+fn main() -> void {
+  // 深递归 fib(25)
+  print(fib(25));
+
+  // 大数组
+  let big: int[] = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20];
+  print(sum_arr(big));
+  print(len(big));
+
+  // 浮点精度
+  let f1: float = 1.1;
+  let f2: float = 2.2;
+  let f3: float = f1 + f2;
+  print(f3);
+  let f4: float = 3.14159265358979;
+  print(f4);
+  let f5: float = f4 * 2.0;
+  print(f5);
+
+  // 浮点除法
+  let f6: float = 10.0 / 3.0;
+  print(f6);
+
+  // 整数除法
+  let i1: int = 10 / 3;
+  print(i1);
+
+  // 取模
+  let i2: int = 10 % 3;
+  print(i2);
+
+  // 负数运算
+  let i3: int = -10 / 3;
+  print(i3);
+  let i4: int = -10 % 3;
+  print(i4);
+
+  // 变量遮蔽
+  let x: int = 100;
+  {
+    let x: int = 200;
+    print(x);
+  }
+  print(x);
+
+  // 嵌套作用域
+  let y: int = 1;
+  {
+    let y: int = 2;
+    {
+      let y: int = 3;
+      print(y);
+    }
+    print(y);
+  }
+  print(y);
+
+  // 字符串操作
+  let s1: string = "Hello";
+  let s2: string = " ";
+  let s3: string = "World";
+  let s4: string = s1 + s2 + s3 + "!";
+  print(s4);
+  print(len(s4));
+
+  // 空字符串
+  let empty: string = "";
+  print(len(empty));
+
+  // 布尔逻辑
+  let b1: bool = true && false;
+  print(b1);
+  let b2: bool = true || false;
+  print(b2);
+  let b3: bool = !true;
+  print(b3);
+  let b4: bool = (1 < 2) && (3 > 2);
+  print(b4);
+}

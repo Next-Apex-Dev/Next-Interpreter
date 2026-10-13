@@ -1,0 +1,144 @@
+// Next 计算器
+
+fn tokenize(expr: string) -> string[] {
+    let tokens: string[] = [];
+    let i: int = 0;
+    while (i < len(expr)) {
+        let c: string = char_at(expr, i);
+        if (c == " " || c == "\t") {
+            i = i + 1;
+            continue;
+        }
+        if (is_digit(c) || c == ".") {
+            let num: string = "";
+            while (i < len(expr) && (is_digit(char_at(expr, i)) || char_at(expr, i) == ".")) {
+                num = num + char_at(expr, i);
+                i = i + 1;
+            }
+            push(tokens, num);
+            continue;
+        }
+        if (c == "+" || c == "-" || c == "*" || c == "/" || c == "^" || c == "(" || c == ")" || c == "%") {
+            push(tokens, c);
+            i = i + 1;
+            continue;
+        }
+        if (is_alpha(c)) {
+            let name: string = "";
+            while (i < len(expr) && (is_alpha(char_at(expr, i)) || is_digit(char_at(expr, i)))) {
+                name = name + char_at(expr, i);
+                i = i + 1;
+            }
+            push(tokens, name);
+            continue;
+        }
+        i = i + 1;
+    }
+    return tokens;
+}
+
+fn parse_factor(tokens: string[], pos: int[]) -> float {
+    let tok: string = tokens[pos[0]];
+    if (tok == "(") {
+        pos[0] = pos[0] + 1;
+        let result: float = parse_expr(tokens, pos);
+        pos[0] = pos[0] + 1;
+        return result;
+    }
+    if (tok == "sin" || tok == "cos" || tok == "tan" || tok == "sqrt" || tok == "abs" || tok == "log" || tok == "exp") {
+        pos[0] = pos[0] + 1;
+        let arg: float = parse_factor(tokens, pos);
+        if (tok == "sin") { return sin(arg); }
+        if (tok == "cos") { return cos(arg); }
+        if (tok == "tan") { return tan(arg); }
+        if (tok == "sqrt") { return sqrt(arg); }
+        if (tok == "abs") { return abs(arg); }
+        if (tok == "log") { return log(arg); }
+        if (tok == "exp") { return exp(arg); }
+    }
+    if (tok == "-") {
+        pos[0] = pos[0] + 1;
+        return -parse_factor(tokens, pos);
+    }
+    if (tok == "+") {
+        pos[0] = pos[0] + 1;
+        return parse_factor(tokens, pos);
+    }
+    let val: float = to_float(tokens[pos[0]]);
+    pos[0] = pos[0] + 1;
+    return val;
+}
+
+fn parse_power(tokens: string[], pos: int[]) -> float {
+    let base: float = parse_factor(tokens, pos);
+    while (pos[0] < len(tokens) && tokens[pos[0]] == "^") {
+        pos[0] = pos[0] + 1;
+        let ev: float = parse_power(tokens, pos);
+        base = pow(base, ev);
+    }
+    return base;
+}
+
+fn parse_term(tokens: string[], pos: int[]) -> float {
+    let result: float = parse_power(tokens, pos);
+    while (pos[0] < len(tokens)) {
+        let op: string = tokens[pos[0]];
+        if (op == "*") {
+            pos[0] = pos[0] + 1;
+            result = result * parse_power(tokens, pos);
+        } else if (op == "/") {
+            pos[0] = pos[0] + 1;
+            result = result / parse_power(tokens, pos);
+        } else if (op == "%") {
+            pos[0] = pos[0] + 1;
+            result = to_int(result) % to_int(parse_power(tokens, pos));
+        } else {
+            break;
+        }
+    }
+    return result;
+}
+
+fn parse_expr(tokens: string[], pos: int[]) -> float {
+    let result: float = parse_term(tokens, pos);
+    while (pos[0] < len(tokens)) {
+        let op: string = tokens[pos[0]];
+        if (op == "+") {
+            pos[0] = pos[0] + 1;
+            result = result + parse_term(tokens, pos);
+        } else if (op == "-") {
+            pos[0] = pos[0] + 1;
+            result = result - parse_term(tokens, pos);
+        } else {
+            break;
+        }
+    }
+    return result;
+}
+
+fn evaluate(expr: string) -> float {
+    let tokens: string[] = tokenize(expr);
+    let pos: int[] = [0];
+    return parse_expr(tokens, pos);
+}
+
+fn main() -> void {
+    println("===== Next 计算器 =====");
+    println("支持: + - * / % ^ ( ) sin cos tan sqrt abs log exp");
+    println("输入 exit 退出");
+    println("========================");
+    
+    while (true) {
+        print(">> ");
+        let expr: string = input();
+        if (trim(expr) == "exit" || trim(expr) == "quit") {
+            break;
+        }
+        if (trim(expr) == "") {
+            continue;
+        }
+        let r: float = evaluate(expr);
+        println("= " + str(r));
+    }
+    println("再见!");
+}

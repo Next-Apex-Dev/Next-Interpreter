@@ -1,0 +1,8 @@
+fn main() -> void {
+    print(type(42));
+    print(type(3.14));
+    print(type("hello"));
+    print(type(true));
+    print(len([1,2,3]));
+    print(len("abc"));
+}

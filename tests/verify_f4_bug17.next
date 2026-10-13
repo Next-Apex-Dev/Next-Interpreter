@@ -1,0 +1,115 @@
+// 补充验证：新功能4 多catch块 + BUG 17 泛型误解析
+fn main() -> void {
+    let failures: int = 0;
+
+    // ========== 新功能4: 多catch块 ==========
+    // 测试1: 第一个catch匹配
+    let r1: string = "";
+    try {
+        throw ValueError("val");
+    } catch (ValueError) as e {
+        r1 = "value";
+    } catch (KeyError) as e {
+        r1 = "key";
+    }
+    if r1 == "value" {
+        print("PASS F4a: multi-catch first matches");
+    } else {
+        print("FAIL F4a: got " + r1);
+        failures = failures + 1;
+    }
+
+    // 测试2: 第二个catch匹配
+    let r2: string = "";
+    try {
+        throw KeyError("key");
+    } catch (ValueError) as e {
+        r2 = "value";
+    } catch (KeyError) as e {
+        r2 = "key";
+    }
+    if r2 == "key" {
+        print("PASS F4b: multi-catch second matches");
+    } else {
+        print("FAIL F4b: got " + r2);
+        failures = failures + 1;
+    }
+
+    // 测试3: 三个catch块，第三个匹配
+    let r3: string = "";
+    try {
+        throw IndexError("idx");
+    } catch (ValueError) as e {
+        r3 = "value";
+    } catch (KeyError) as e {
+        r3 = "key";
+    } catch (IndexError) as e {
+        r3 = "index";
+    }
+    if r3 == "index" {
+        print("PASS F4c: multi-catch third matches");
+    } else {
+        print("FAIL F4c: got " + r3);
+        failures = failures + 1;
+    }
+
+    // 测试4: 多catch块 + finally
+    let r4: string = "";
+    let fin: bool = false;
+    try {
+        throw KeyError("key2");
+    } catch (ValueError) as e {
+        r4 = "value";
+    } catch (KeyError) as e {
+        r4 = "key";
+    } finally {
+        fin = true;
+    }
+    if r4 == "key" && fin {
+        print("PASS F4d: multi-catch + finally");
+    } else {
+        print("FAIL F4d: r4=" + r4 + " fin=" + str(fin));
+        failures = failures + 1;
+    }
+
+    // ========== BUG 17: a < b 不被误解析为泛型 ==========
+    let a: int = 5;
+    let b: int = 10;
+    let cmp: bool = a < b;
+    if cmp {
+        print("PASS BUG17a: a < b not parsed as generic");
+    } else {
+        print("FAIL BUG17a: a < b misparsed");
+        failures = failures + 1;
+    }
+
+    // BUG 17 场景2: 函数调用后比较
+    let arr: int[] = [1, 2, 3];
+    let ok: bool = len(arr) < 5;
+    if ok {
+        print("PASS BUG17b: len(arr) < 5 not parsed as generic");
+    } else {
+        print("FAIL BUG17b: misparsed");
+        failures = failures + 1;
+    }
+
+    // BUG 17 场景3: 链式比较
+    let x: int = 3;
+    let y: int = 7;
+    let z: int = 100;
+    let chain: bool = x < y;
+    if chain && y < z {
+        print("PASS BUG17c: chained comparison works");
+    } else {
+        print("FAIL BUG17c: chain misparsed");
+        failures = failures + 1;
+    }
+
+    // ========== 总结 ==========
+    print("");
+    if failures == 0 {
+        print("=== F4 multi-catch + BUG17 ALL VERIFIED ===");
+    } else {
+        print("=== FAILED: " + str(failures) + " tests ===");
+    }
+}
